@@ -32,6 +32,7 @@ class KiwoomEvent():
         now = datetime.datetime.now()
         today = now.strftime("%Y%m%d")
         return today
+    
 
         #현 로그인 상태
     def connect_code(self):
