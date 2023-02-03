@@ -22,3 +22,5 @@
 2. 타입별 사이즈 + 형식문자 : ![형식문자+사이즈](https://user-images.githubusercontent.com/70988272/216497050-1bee0d9d-334f-4a73-bd48-18d1ca632e26.JPG)
 
 0. char[] 와 char* 비교 : ![image](https://user-images.githubusercontent.com/70988272/216499594-0c7f00d3-56be-4edd-81ca-d5bcf5e828b0.png)
+
+0. ㅇㅇ
