@@ -38,4 +38,5 @@
 
 
 
-0. 가변함수 : ![image](https://user-images.githubusercontent.com/70988272/216602449-8d30ca69-c771-4e80-8a0d-7167ec324b88.png)
+0. 가변함수 : ![image](https://user-images.githubusercontent.com/70988272/216602537-f11846d4-699b-460c-94c8-6a3a6b498da1.png)
+
