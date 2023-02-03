@@ -16,3 +16,5 @@
 2. 실제 프로젝트 함수들 정리 (함수명/함수사용 방식/ 함수 사용 예제 순으로 정리) + C언어 STL 함수
 3. 파일 분리
 ---
+# 이론 정리
+1. Switch : ![switch](https://user-images.githubusercontent.com/70988272/216491871-adbbd184-2bdc-4466-abd4-4cfca1acd6ec.JPG)
