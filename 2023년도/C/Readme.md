@@ -12,7 +12,7 @@
 0. int main (int argc, int* argv) 
 0. char[] 과 char* 의 비교 (해결)
 0. Const 개념! Static 개념! extern 개념! (해결)
-0. typedef 와 enum
+0. typedef 와 enum (해결)
 ---
 ## 실기
 1. 자료구조 구현 (연결리스트, 힙, 트리(순회포함), LCS(DP) 등등)
