@@ -31,3 +31,6 @@
 
 0. malloc 같은 형 변환 : ![image](https://user-images.githubusercontent.com/70988272/216532933-742311bb-6a9c-4517-b96d-047061746727.png) + [형변환 꼭 해야하는가?!](https://untitle-ssu.tistory.com/69)
 
+0. 구조체 (포인터와 개념) :![image](https://user-images.githubusercontent.com/70988272/216589263-2725ff81-f857-4125-ae72-eb0b60c686ea.png)
+
+
