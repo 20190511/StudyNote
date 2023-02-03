@@ -27,4 +27,7 @@
 
 0. Const, Static, Extern : ![image](https://user-images.githubusercontent.com/70988272/216510650-e62e895a-2970-4b85-9e41-3125a95cd55d.png)
 
+0. typedef 와 enum : ![image](https://user-images.githubusercontent.com/70988272/216519136-f73b7317-9aeb-4388-8ee8-c07ebc4d56a6.png)
+
 0. malloc 같은 형 변환 : [형변환 꼭 해야하는가?!](https://untitle-ssu.tistory.com/69)
+
