@@ -2,14 +2,14 @@
 ---
 ## 이론
 0. 구조체 변수와 포인터의 관계
-0. 함수 타입 포인터 + 함수 매개변수 포인터 정리
-0. 각 타입 별 메모리 재정리 (double, float, long long 등 각 메모리크기) (해결)
-0. define
-0. malloc 같은 void* 타입 포인터 정리 (형변환 여부) (해결)
-0. 파일 분리 개념 (헤더 / 오브젝트파일 / C파일 분리) 
 0. 입출력 예제
-0. switch 문 (해결)
+0. 파일 분리 개념 (헤더 / 오브젝트파일 / C파일 분리) 
+0. 함수 타입 포인터 + 함수 매개변수 포인터 정리
+0. define
 0. int main (int argc, int* argv) 
+0. 각 타입 별 메모리 재정리 (double, float, long long 등 각 메모리크기) (해결)
+0. malloc 같은 void* 타입 포인터 정리 (형변환 여부) (해결)
+0. switch 문 (해결)
 0. char[] 과 char* 의 비교 (해결)
 0. Const 개념! Static 개념! extern 개념! (해결)
 0. typedef 와 enum (해결)
