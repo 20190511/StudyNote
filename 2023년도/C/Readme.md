@@ -36,7 +36,7 @@
 
 0. 다차원 배열과 포인터+매개변수전달 방식 : ![image](https://user-images.githubusercontent.com/70988272/216599492-4ca49994-bb61-4429-9c03-24b924f2e8a4.png)
 
-
+0. 파일처리 : ![image](https://user-images.githubusercontent.com/70988272/216636588-6ebd5ce4-88a6-4da7-a22c-7b2743da8d98.png)
 
 0. 가변함수 : ![image](https://user-images.githubusercontent.com/70988272/216602537-f11846d4-699b-460c-94c8-6a3a6b498da1.png)
 
