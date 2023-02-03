@@ -33,4 +33,4 @@
 
 0. 구조체 (포인터와 개념) :![image](https://user-images.githubusercontent.com/70988272/216589263-2725ff81-f857-4125-ae72-eb0b60c686ea.png)
 
-
+0. 다차원 배열과 포인터+매개변수전달 방식 : ![image](https://user-images.githubusercontent.com/70988272/216599492-4ca49994-bb61-4429-9c03-24b924f2e8a4.png)
