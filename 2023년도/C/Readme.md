@@ -27,3 +27,4 @@
 
 0. Const, Static, Extern : ![image](https://user-images.githubusercontent.com/70988272/216510650-e62e895a-2970-4b85-9e41-3125a95cd55d.png)
 
+0. malloc 같은 형 변환 : [형변환 꼭 해야하는가?!](https://untitle-ssu.tistory.com/69)
