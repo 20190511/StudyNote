@@ -20,3 +20,5 @@
 # 이론 정리
 1. Switch : ![switch](https://user-images.githubusercontent.com/70988272/216491871-adbbd184-2bdc-4466-abd4-4cfca1acd6ec.JPG)
 2. 타입별 사이즈 + 형식문자 : ![형식문자+사이즈](https://user-images.githubusercontent.com/70988272/216497050-1bee0d9d-334f-4a73-bd48-18d1ca632e26.JPG)
+
+0. char[] 와 char* 비교 : ![image](https://user-images.githubusercontent.com/70988272/216499594-0c7f00d3-56be-4edd-81ca-d5bcf5e828b0.png)
