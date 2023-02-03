@@ -10,6 +10,7 @@
 7. 입출력 예제
 8. switch 문 (해결)
 9. int main (int argc, int* argv) 
+10. enum 개념 정리 (namespace ?)
 ---
 ## 실기
 1. 자료구조 구현 (연결리스트, 힙, 트리(순회포함), LCS(DP) 등등)
