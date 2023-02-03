@@ -13,6 +13,7 @@
 0. typedef 와 enum (해결)
 0. 구조체 변수와 포인터의 관계 (해결)
 0. 함수 타입 포인터 + 함수 매개변수 포인터 정리 (해결)
+0. 가변함수 (해결)
 ---
 ## 실기
 1. 자료구조 구현 (연결리스트, 힙, 트리(순회포함), LCS(DP) 등등)
@@ -34,3 +35,7 @@
 0. 구조체 (포인터와 개념) :![image](https://user-images.githubusercontent.com/70988272/216589263-2725ff81-f857-4125-ae72-eb0b60c686ea.png)
 
 0. 다차원 배열과 포인터+매개변수전달 방식 : ![image](https://user-images.githubusercontent.com/70988272/216599492-4ca49994-bb61-4429-9c03-24b924f2e8a4.png)
+
+
+
+0. 가변함수 : ![image](https://user-images.githubusercontent.com/70988272/216602449-8d30ca69-c771-4e80-8a0d-7167ec324b88.png)
