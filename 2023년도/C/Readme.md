@@ -5,7 +5,7 @@
 0. 함수 타입 포인터 + 함수 매개변수 포인터 정리
 0. 각 타입 별 메모리 재정리 (double, float, long long 등 각 메모리크기) (해결)
 0. define
-0. malloc 같은 void* 타입 포인터 정리 (형변환)
+0. malloc 같은 void* 타입 포인터 정리 (형변환 여부) (해결)
 0. 파일 분리 개념 (헤더 / 오브젝트파일 / C파일 분리) 
 0. 입출력 예제
 0. switch 문 (해결)
@@ -29,5 +29,5 @@
 
 0. typedef 와 enum : ![image](https://user-images.githubusercontent.com/70988272/216519136-f73b7317-9aeb-4388-8ee8-c07ebc4d56a6.png)
 
-0. malloc 같은 형 변환 : [형변환 꼭 해야하는가?!](https://untitle-ssu.tistory.com/69)
+0. malloc 같은 형 변환 : ![image](https://user-images.githubusercontent.com/70988272/216532933-742311bb-6a9c-4517-b96d-047061746727.png) + [형변환 꼭 해야하는가?!](https://untitle-ssu.tistory.com/69)
 
