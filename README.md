@@ -5,7 +5,7 @@ H/W, S/W, Alogrithm 배운 내용 정리
 ---
 ## 2021년도
 ---
-## 2022년도 (ARMY : Republic of Korea)
+## 2022년도 (ARMY : Republic of Korea : 2021-05-31 ~ 2022-11-30)
 ### 알고리즘
 1. 소수(아리스토테네스체) 알고리즘
 2. 부분합집합
