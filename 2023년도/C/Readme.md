@@ -25,4 +25,5 @@
 
 0. char[] 와 char* 비교 : ![image](https://user-images.githubusercontent.com/70988272/216499594-0c7f00d3-56be-4edd-81ca-d5bcf5e828b0.png)
 
-0. ㅇㅇ
+0. Const, Static, Extern : ![image](https://user-images.githubusercontent.com/70988272/216510650-e62e895a-2970-4b85-9e41-3125a95cd55d.png)
+
