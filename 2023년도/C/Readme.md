@@ -8,7 +8,7 @@
 5. malloc 같은 void* 타입 포인터 정리 (형변환)
 6. 파일 분리 개념 (헤더 / 오브젝트파일 / C파일 분리) 
 7. 입출력 예제
-8. switch 문
+8. (해결)switch 문
 9. int main (int argc, int* argv) 
 ---
 ## 실기
