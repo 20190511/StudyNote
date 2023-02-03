@@ -11,6 +11,7 @@
 0. switch 문 (해결)
 0. int main (int argc, int* argv) 
 0. enum 개념 정리 (namespace ?)
+0. char[] 과 char* 의 비교 (해결)
 ---
 ## 실기
 1. 자료구조 구현 (연결리스트, 힙, 트리(순회포함), LCS(DP) 등등)
