@@ -11,3 +11,5 @@ gcc -l : 링크할 라이브러리
 ![image](https://user-images.githubusercontent.com/70988272/216768764-d6d49802-0876-4885-b57c-b152989e416a.png)
 ---
 
+## read And Write 예제 : HELLO.txt 파일을 읽어서 -> HELLO.bak 파일로 복사하기
+![image](https://user-images.githubusercontent.com/70988272/216774923-61126193-aeeb-4f5e-bcd8-f37bda209ca4.png)
