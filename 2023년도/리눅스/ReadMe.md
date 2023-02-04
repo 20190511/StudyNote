@@ -8,7 +8,6 @@ gcc -g : 실행 파일을 생성할 때, 디버거를 위한 변수테이블 생
 gcc -I : 헤더파일을 검색할 디렉토리명  
 gcc -L : 라이브러리를 검색할 디렉토리명  
 gcc -l : 링크할 라이브러리   
-![image](https://user-images.githubusercontent.com/70988272/216768743-7b40710e-0d07-4469-8e1f-82a41082f4ba.png)
-
+![image](https://user-images.githubusercontent.com/70988272/216768764-d6d49802-0876-4885-b57c-b152989e416a.png)
 ---
 
