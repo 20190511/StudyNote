@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <string.h>
 
 #define NAME_SIZE	64
 
@@ -45,8 +44,9 @@ int main(int argc, char* argv[])
 		record.pid = getpid();
 		printf("pid = %d\n", record.pid);
 
-		//구조체 모든 변수를 문자열화 (char*)&record (단, char*타입이 없어야함, char a[40] 이렇게 쓸 것.
-		write(fd, (char*)&record, sizeof(record));
+		// &record 구조체 포인터 위치에서 sizeof(record) 만큼 write 하겠다는 의미이다.
+		// (char*)&record 해주면 casting되어 더 자세한 값을 얻을 수 있다.
+		write(fd, &record, sizeof(record));
 		printf("sizeof(char(*)struct) = %ld, %s\n",sizeof((char*)&record),(char*)&record);
 		
 	}
