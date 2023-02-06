@@ -45,4 +45,22 @@ off_t lseek(int fd, off_t offset, int whence);  //off_t 는 long 타입을 의�
   return 성공시 바뀐 위치 offset (long타입), 실패시 -1; 
 
 
+// dup, dup2 : 파일디스크립터 복사 : file offset도 복사 (but, file flags는 복사되지 않음)
+/* fp1 파일디스크립터를 파일테이블 중 비어 있는가장 작은 값에 복사
+  dup2는 fp1 -> fp2에 복사하는 것을 의미한다.
+  dup2 의 fp2가 이미 채워져있는 값이라면? -> 그 값을 종료(close(fp2) 하고 fcntl(fp1, F_DUPFN, fp2)를 하는것과 동일
+*/
+#include <unistd.h>
+int dup (int fp1); //fp1 복사
+  return 성공 시 새로운 디스크립터 , 실패시 -1;
+int dup2 (int fp1, int fp2); // fp1 -> fp2에 복사
+  return 성공 시 fp2, 실패 시 -1;
+
+
+// sync, fsync, fdatsync : write-back 버퍼 동기화함수. (해당 값을 바로 디스크에 저장시킴)
+void sync(void); // 호출 즉시 write-back 동기화해버림
+int fsync (int fp); //fp 입출력 종료 시 모든파일 write-back 동기화
+  return 성공 시 1, 실패 시 0
+int fdatasync (int fp); //fp 입출력 종료 시, fp파일 write-back 
+  return 성공 시 1, 실패 시 0
 
