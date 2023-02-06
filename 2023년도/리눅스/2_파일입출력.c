@@ -23,7 +23,9 @@ int read (int fd, void *buf, size_t nbytes); //size_t : unsigned int
 
 
 // lseek : 해당 파일디스크립터 의 파일 offset(위치) 변경.
-/* 파일 크기보다 큰 offset을 설정할 수 있음. (그만큼 hole이 생긴다.) */
+/* 파일 크기보다 큰 offset을 설정할 수 있음. (그만큼 hole이 생긴다.)
+   다른 fd가 lseek을 호출해도 개별적인 offset을 가짐. (같은 fd엔 같은 offset!)
+*/
 #include <sys/type.h>
 #include <unistd.h>
 off_t lseek(int fd, off_t offset, int whence);  //off_t 는 long 타입을 의미함.
