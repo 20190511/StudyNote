@@ -164,4 +164,19 @@ int closedir (DIR *dp);                       //
   return 성공 시 0, 실패 시 -1 -> errno 생성;    
 void seekdir (DIR *dp, long loc);             // dp 위치를 doc 변경함.
 
+/* 14. chdir, fchdir : 현재 작업 디렉토리 변경 함수. : 
+       변경하고자 하는 경로 path 가 / (root라고 표현) 으로 시작하지 않으면 path를 상대경로로 인식함.*/
+#include <unistd.h>
+int chdir(const char* path);                  // 작업중인 디렉토리 변경함수.
+int fchdir(int fd);                           // 작업중인 디렉토리 변경함수. (fd : 파일 디스크립터 이용)
+  return 성공 시 0, 실패 시 -1 -> errno 생성;    
+  
 
+/* 15. getcwd, get_current_dir_name : 현재 작업중인 디렉토리 경로를 출력해줌 
+  ★ 모든 시스템은 프로세스의 한 속성으로 현재 작업중인 디렉토리에 대한 포인터를 갖는다.
+    하지만, 해당 값은 문자열이 아니라 파일 디스크립터 값을 가지게 된다!,
+      그래서 원래대로라면 파일 디스크립터를 이용해서 root (/) 에 도달할 때까지 역추적을 하는 번거로움을 없앤 함수.*/
+#include <unistd.h>
+char *getcwd(char *buf, size_t size);         // buf에 size만큼 현재작업공간의 경로를 return해줌
+char *get_current_dir_name(void);             // buf를 없애고 return값만 받는 경우.
+  return 성공 시 작업 디렉토리 경로 (path), 실패 시 NULL -> errno 설정;
