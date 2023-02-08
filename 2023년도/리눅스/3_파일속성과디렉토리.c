@@ -30,3 +30,44 @@ int access (const char * path, int mode);                         // 파일 접�
 #include <sys/types.h>
 #include <sys/stat.h>
 mode_t umask(mode_t cmask);
+  return 이전의 파일 모드 생성 마스크.
+
+/*5. chmod, fchmod : 적근 권한 변경
+  mode 는 stat 의 st_mode 로 위와 동일.
+  fchmod의 fd는 개방된 file desriptor 사용해야한다.
+*/
+#include <sys/stat.h>
+int chmod (const char* path, mode_t mode);
+int fchmod (int fd, mode_t mode);
+  return 성공 시 0, 실패 시 -1 -> errno 생성;
+
+
+/* 6. chowd, fchowd, lchown : 소유자 ID 와 그룹 ID 변경
+  :사용자 식별 아이디 uid, gid를 변경하는 함수.
+*/
+#include <unistd.h>
+int chown (const char *path, uid_t owner, gid_t group);           // uid,gid 
+int fchown (int fd, uid_t owner, gid_t group);                    // 파일디스크립터를 이용한 uid,gid 변경
+int lchown (const char *path, uid_t owner, gid_t group);          // Symbolic Link 파일 자체의 uid,gid 변경
+  return 상공 시 0, 실패 시 -1 ->errno 생성;
+
+
+/* 7. truncate, ftruncate : length(바이트) 만큼 파일을 자르는 함수
+  파일의 크기 < length 을 경우, 파일의 크기가 늘어난다.
+  파일의 크기 > length 의 경우, 파일의 크기가 length만큼 줄어든다.
+    length는 off_t 타입으로 lseek 와 같은 long 타입이다.*/
+#include <unistd.h>
+#include <sys/types.h>
+int truncate(const char *path, off_t length);                     // 파일 길이를 length(byte)만큼 자름
+int ftruncate(int path, off_t length);                            // 파일 길이를 length(byte)만큼 자름 (fd 이용)
+  return 성공 시 0, 실패 시 -1 -> errno 생성;   
+
+
+/* 8. link, unlink : Hard link  (
+  link(원래 파일, 연결할 파일);
+  unlink(링크 끊을 파일);   //unlink를 하여
+*/
+#include <unistd.h>
+int link (const char* exist_path, const char* new_path);          // 파일을 다른 파일명으로 i-node에 접근함 (다른 이름으로 동일 폴더 공유)
+int unlink (const char* path);                                    // 해당 파일의 링크를 끊음 (링크 count가 0이면 해당 i-node는 free space)
+
