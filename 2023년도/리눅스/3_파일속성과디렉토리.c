@@ -102,4 +102,67 @@ int symlink (const char *target_path, const char *linking_path);    // a.txt (�
 int readlink (const char *linking_path, char *buf, size_t buf_size); // ★ 주의 : buf에 들어간 buf의 끝이 \0 으로 끝나지 않으므로 추가해줘라.
    return 성공 시 읽은 바이트 수, 실패 시 -1 -> errno 생성
    
+ /* 11. utime : utimbuf 구조체를 이용하여, 접근시간 과 수정시간을 변경할 수 있다.
+      하지만, stat 구조체의 st_ctime을 utime으로 변경할 수 없다. 이유는 파일을 만들고 실행할 당시에
+      st_ctime이 프로그램을 실행하는 시점으로 정해지기 때문이다.
+      ★ 즉, 정리하자면 변경되는 건 atime (가장 최근 접근시각), mtime (가장 최근 수정시각),
+                       변경되지 않는건 ctime (가장 최근 상태변경시각) 이다. */
+// utimbuf 구조체
+struct utimbuf {
+  time_t actime;        // 접근시간
+  time_t moditime;      // 수정시간
+};
+
+#include <sys/types.h>
+#include <utime.h>
+int utime(const char *path, struct utimbuf *buf);                     // 해당 파일의 utimbuf를 변경하는 함수
+  return 성공 시 0, 실패 시 -1 -> errno 생성;    
+ 
+
+/* 12. mkdir, rmdir :  '빈' 디렉토리 추가, 삭제
+       rm디렉토리로는 빈 디렉토리만 삭제할 수 있고 -> 빈 디렉토리란 "." , ".." 디렉토리만 있는 디렉토리이다.
+       파일카운트가 0 이되더라도 레퍼런스 카운터가 존재하면 해당 레퍼런스카운트가 0이 될 때 폴더 삭제 */
+#include <sys/stat.h>
+#include <sys/types.h>
+int mkdir (const char *path, mode_t mode);                          // 빈 디렉토리 생성
+  return 성공 시 0, 실패 시 -1 -> errno 생성;    
+  
+#include <unistd.h>
+int rmdir (const char *path);                                       // 빈 디렉토리 삭제.
+  return 성공 시 0, 실패 시 -1 -> errno 생성;    
+
+
+
+/* 13. opendir(), readdir(), rewinddir(), closedir(), telldir(), seekdir() : 디렉토리 내용을 '보기' 위한 함수들
+  해당 함수들은 opendir() 의 return 값인 DIR 구조체를 이용해서 본다.
+  디렉토리 파일들은 볼 수는 있지만 수정하는 것은 커널만이 할 수 있다. (임의로 디렉토리를 수정시키지 않기 위함) 
+  <정리>
+  ■ DIR *dp (디렉토리)       <-> FILE *fp (파일)    { 내부적으로만 사용, 직접참조할 일은 없음}
+  ■ struct dirent (디렉토리) <-> struct stat (파일) { 직접 데이터값을 볼 때 사용.}
+  */
+
+  // dirent 구조체 : 디렉토리 정보를 담고있는 구조체 (파일의 stat구조체와 비슷하다고 생각할 것)
+struct dirent
+{
+    long d_ino;                 /* long 타입 : 디렉토리 i-node값 */
+    off_t d_off;                /* long 타입 : dirent 의 offset */
+    unsigned short d_reclen;    /* unsigned short : d_name 의 길이 */
+    char d_name [NAME_MAX+1];   /* char 배열 : 파일 이름 (없다면 NULL로 종료) */
+}
+
+#include <dirent.h>
+#include <sys/types.h>
+DIR *opendir (const char *path);              // 디렉토리 open : dirent 생성
+  return 성공시 포인터, 실패시 NULL -> errno 설정
+void rewinddir (DIR *dp);                     // 디렉토리 dp의 위치를 처음 위치로 되돌림.
+long telldir (DIR *dp);                       // 디렉토리의 정보를 읽을 현재위치를 얻음.
+  return 성공 시 dp에 해당하는 디렉토리 안의 현재위치, 실패 시 -1 -> errno설정    
+
+#include <dirent.h>
+struct dirent* readdir (DIR *dp);             // readdir 한 번 호출할 때마다 1건의 디렉토리 속의 디렉토리/파일 정보를 받아옴.
+  return 성공 시 포인터, 디렉토리의 끝일 경우 NULL, 에러시 NULL -> errno 설정;
+int closedir (DIR *dp);                       //
+  return 성공 시 0, 실패 시 -1 -> errno 생성;    
+void seekdir (DIR *dp, long loc);             // dp 위치를 doc 변경함.
+
 
