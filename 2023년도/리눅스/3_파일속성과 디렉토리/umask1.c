@@ -13,9 +13,10 @@ int main (void)
 
     if ( creat(name1, RW_MODE) < 0)
         PRINT_ERROR(name1);
-    umask( S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+    // Group 과 Other의 마스크 생성
+    umask( S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH); 
     if ( creat(name2, RW_MODE) <0)
         PRINT_ERROR(name2);
-    
+    // -> GROUP과 OTHER은 모든 권한이 없어짐.
     exit(0);
 }
