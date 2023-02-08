@@ -142,13 +142,12 @@ int rmdir (const char *path);                                       // 빈 디�
   */
 
   // dirent 구조체 : 디렉토리 정보를 담고있는 구조체 (파일의 stat구조체와 비슷하다고 생각할 것)
-struct dirent
-{
-    long d_ino;                 /* long 타입 : 디렉토리 i-node값 */
+struct dirent {
+    long d_ino;                 /* long 타입 : i-node값 */
     off_t d_off;                /* long 타입 : dirent 의 offset */
     unsigned short d_reclen;    /* unsigned short : d_name 의 길이 */
     char d_name [NAME_MAX+1];   /* char 배열 : 파일 이름 (없다면 NULL로 종료) */
-}
+};
 
 #include <dirent.h>
 #include <sys/types.h>
