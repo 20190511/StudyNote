@@ -28,9 +28,21 @@ int main (int argc, char* argv[]){
         exit(1);
     }
 
+    // argv[1]->argv[2] 이므로 해당 파일이 없어 오류가 남.
+    if ( (fd = open(argv[1], O_RDONLY)) < 0)
+    {
+        printf("Second open Error for %s\n", argv[1]);
+    }
+    else
+    {
+        fprintf(stderr, "STRANGE ??\n");
+        exit(1);
+    }
+
+    //2번 파일은 존재하므로 성공.
     if ( (fd = open(argv[2], O_RDONLY)) < 0)
     {
-        fprintf(stderr, "Open Error : %s\n", argv[2]);
+        fprintf(stderr, "third Open Error : %s\n", argv[2]);
         exit(1);
     }
 
