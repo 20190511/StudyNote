@@ -37,7 +37,7 @@ int access (const char * path, int mode);                         // 파일 접�
 mode_t umask(mode_t cmask);
   return 이전의 파일 모드 생성 마스크.
 
-/*5. chmod, fchmod : 적근 권한 변경
+/*5. chmod, fchmod : 접근 권한 변경
   mode 는 stat 의 st_mode 로 위와 동일.
   fchmod의 fd는 개방된 file desriptor 사용해야한다.
 */
