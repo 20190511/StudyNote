@@ -76,3 +76,11 @@ int link (const char* exist_path, const char* new_path);          // 파일을 �
 int unlink (const char* path);                                    // 해당 파일의 링크를 끊음 (링크 count가 0이면 해당 i-node는 free space)
   return 성공 시 0, 실패 시 -1 -> errno 생성;   
 
+/* 9. remove rename : 삭제 + 이름 변경
+    remove의 경우 파일 접근에선 unlink와 동일하나, remove는 디렉토리도 지울 수 있음.
+     하지만, rename 의 바꾸려는 인자의 디렉토리가 존재하고 비어있지 않으면 오류 
+     심볼릭 링크 파일의 경우, 심볼릭 링크 자체의 이름이 변경됨.*/
+#include <stdio.h>
+int remove (const char *path);                                     // path 경로에 있는 파일/디렉토리 삭제.
+int rename (const char *old_name, const char *new_name);           // old_name -> new_name 으로 이름 변경 (바꾸려는 이름이 이미 존재 시 오류) 
+  return 성공 시 0, 실패 시 -1 -> errno 생성;   
