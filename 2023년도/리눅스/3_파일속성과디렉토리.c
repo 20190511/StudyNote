@@ -84,3 +84,21 @@ int unlink (const char* path);                                    // 해당 파�
 int remove (const char *path);                                     // path 경로에 있는 파일/디렉토리 삭제.
 int rename (const char *old_name, const char *new_name);           // old_name -> new_name 으로 이름 변경 (바꾸려는 이름이 이미 존재 시 오류) 
   return 성공 시 0, 실패 시 -1 -> errno 생성;   
+
+/* 10. symlink, readlink : soft-link(Hard link) 를 만드는 함수
+   Window의 바로가기와 같은 기능을 한다. 여기서 링크를 걸 target 파일은 존재하지 않아도 되지만
+   link를 거는 파일은 존재해야한다!. *그리고 리눅스에 있는 파일이 2번째 인자라는 점 주의
+   ex) symlink("/tmp/D/LinuxFolder/ex.txt", "/home/jh/a.txt");     // a.txt (리눅스 파일) -> ex.txt(윈도우에 있는 파일)
+   readlink() 는 Symbolic link된 파일을 읽을 수 있는 함수 
+   ex) 
+    char *buf = buf[BUF_SIZE];
+    int length = readlink(argv[1], buf, BUF_SIZE);
+    buf[length] = '\0';
+    printf("%s\n", buf); */
+#include <unistd.h>
+int symlink (const char *target_path, const char *linking_path);    // a.txt (리눅스 파일) -> ex.txt(윈도우에 있는 파일)
+   return 성공 시 0, 실패 시 -1 -> errno 생성;    
+int readlink (const char *linking_path, char *buf, size_t buf_size); // ★ 주의 : buf에 들어간 buf의 끝이 \0 으로 끝나지 않으므로 추가해줘라.
+   return 성공 시 읽은 바이트 수, 실패 시 -1 -> errno 생성
+   
+
