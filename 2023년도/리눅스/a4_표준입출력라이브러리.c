@@ -1,13 +1,12 @@
 /* 0. Shell 등 Others*/
 1. errno 는 <errno.h>에서 확인할 수 있다.;
-2. tty      : 현재 '표준 입력'에 접속된 '터미널 장치 이름'을 출력하는 명령어 <- /dev/pts/6 을 fp로 설정하면 명령어창(terminal)에 출력됨
-  ex>
-  junhyeong@DESKTOP-UPFPK8Q:~/go2$ tty
-  /dev/pts/6
+2. tty      : 현재 '표준 입력'에 접속된 '터미널 장치 이름'을 출력하는 명령어 <- /dev/pts/6 을 fp로 설정하면 명령어창(terminal)에 출력됨;
+  ex>;
+  junhyeong@DESKTOP-UPFPK8Q:~/go2$ tty;
+  /dev/pts/6;
 2-2. 터미널이란? :Linux 서버에 SSH로 연결할 때 '로컬 컴퓨터에서 실행'하고 '명령을 입력하는 프로그램';
-
-
-
+2-3. int isatty(int fd) 해당 파일 디스크립터가 terminal 인지 확인해주는 함수 :맞으면-> 0(True), 틀리면 1(False);
+3. system(char *str)  : 입력받은 문자열을 system 쉘 입력으로 바꿔서 실행해줌;
 
 /* 1. fopen, freopen, fdopen : FILE *fp 구조체 변수를 만드는 함수
   
@@ -45,4 +44,58 @@ int setvbuf (FILE *fp, char *buf, int mode, size_t size); // buf가 NULL이면 m
   return 성공시 0, 실패시 0이 아닌 다른값 ★; 
 
 
-/* 4. 
+/* 4. fflush : 버퍼의 내용을 해당 파일에 즉시 저장 + 호출 후에도 해당 fp는 계속 Open된 상태로 유지)*/
+#include <stdio.h>
+int fflush (FILE *fp);
+  return 성공시 0, 실패시 EOF(-1) -> errno설정;
+
+/* 5.getc, fgetc, getchar : 한 번에 하나의 문자를 입력받는 함수
+ * 위의 세 함수는 에러나 파일의 끝 모두 EOF(-1) 이므로 feof() 나 ferror() 와 함께 사용!
+ * getchar(void) == fgetc(stdin)
+ */
+#include <stdio.h>
+int getc (FILE *fp);             // 매크로로 구현된 fp의 한 글자를 입력받는 함수
+int fgetc(FILE *fp);             // 함수로 구현된 fp의 한 글자를 입력받는 함수
+int getchar(void);               // stdin으로부터 한 글자를 입려받는 함수: char->int로 변환.
+  return 성공시 0, 실패 or 파일의 끝일때 EOF(-1);
+
+
+/* 6. ferror, feof, clearerr : 앞의 getc,fgetc 의 EOF가 에러인지 파일의 끝인지 확인 시켜주는 함수 
+ * ferror(fp)   <- 앞의 EOF가 입출력 에러인지 알려주는 함수
+ * feof(fp)     <- 앞의 EOF가 파일의 끝에 도달했는지 알려주는 함수
+ * clearerr(fp) <- error 플래그를 없애주는 함수
+ */
+#include <stdio.h>
+int ferror (FILE *fp);           // EOF 가 입출력 에러면 0, 아니면 0이 아닌값
+  return EOF 가 입출력 에러면 0, 아니면 0이 아닌값;
+int feof (FILE *fp);             // EOF 가 파일의 fp._flag가 EOF 플래그가 설정되어 있으면 0, 아니면 0이 아닌수
+  return  EOF 가 파일의 fp._flag가 EOF 플래그가 설정되어 있으면 0, 아니면 0;
+void clearerr (FILE *fp);        // 에러 플래그들을 모두 초기화시켜줌 <- 에러 뜨고 clearerr 안해주면 에러값들이 초기화되지 않아 계속 남아있음
+
+/* 7. ungetc(char x,fp) : 해당 fp stream 에다가 'x'를 하나 넣어주는 함수 
+ * 예를들어 fp stream이 처음에 123+456 에서 쭉쭉 가서 456 이 되었을 때
+ * ungetc('k',fp); 를 해주면 stream이 k456이 되고 이상태에서 getc(fp);를 해주면 456으로 stream이 바뀜 
+ */
+#include <stdio.h>
+int ungetc(int c, FILE *fp);
+  return 성공시 c, 실패시 EOF;
+
+/*8. putc, fputc, putchar(void) : 한 번에 하나의 문자를 출력하는 함수 */
+#include <stdio.h>
+int getc (int c, FILE *fp);             // fp에 c를 출력하는 함수 (함수)
+int fgetc(int c, FILE *fp);             // fp에 c를 출력하는 함수 (매크로)
+int getchar(int c);                     // c를 모니터에 출력해줌
+  return 성공시 0, 실패 or 파일의 끝일때 EOF(-1);
+
+/* 9. fgets, gets : 문자열을 입력받는 함수
+  fgets 시 buf size가 n이라 size=n으로 데이터를 넘겨주면 n-1개까지 읽고 마지막은 항상 NULL 처리된다.
+  그리고 fgets() 재호출 시 나머지 값들을 읽어온다.
+  gets() 시 표준 입력을 받을 떄, '\n'을 NULL로 대체해서 읽는 함수이다..*/
+#include <stdio.h>
+char *fgets(char *buf, int n, FILE *fp);  // fp에 buf를 n만큼 입력받음
+char *gets (char *buf);                   // stdin으로 buf에 입력받음
+
+
+/* 10. fputs, puts : 문자열을 출력받는 함수
+  fputs() 의 경우 : FILE *fp 에 인자 str이 가리키는 
+  */
