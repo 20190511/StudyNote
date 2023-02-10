@@ -187,6 +187,9 @@ int fildno (FILE *fp);                                         // FILE *fp -> in
 #include <stdio.h>
 #include <stdlib.h>
 char* tmpnam (char *ptr);                                   // 문자열 ptr에다가 임시네임을 만들어서 할당해줌.
+  return 성공시 고유한 임시파일의 경로 이름을 가리키는 포인터, 실패시 NULL;
 char* tempnam (const char *dictionary, const char *prefix)  // dictionary 경로와 5자 이내의 prefix를 조합하여 임시명을 만들어줌.
+  return 성공시 고유한 임시파일의 경로 이름을 가리키는 포인터, 실패시 NULL->errno설정;
 FILE* tmpfile (void);                                       // stdin 내부에서 임시파일을 만들어줌.
+  return 성공시 파일 포인터, 실패시 NULL -> errno 
 
