@@ -88,7 +88,9 @@ int getchar(int c);                     // c를 모니터에 출력해줌
   return 성공시 0, 실패 or 파일의 끝일때 EOF(-1);
 
 /* 9. fgets, gets : 문자열을 입력받는 함수
-  fgets 시 buf size가 n이라 size=n으로 데이터를 넘겨주면 n-1개까지 읽고 마지막은 항상 NULL 처리된다.
+  fgets 시 fp로 부터 ★(개행문자('\n' | 파일의끝 | 버퍼사이즈 중 작은값) 만큼 읽어들인 값을 buf에 저장하는 것.
+      buf size가 n이라 size=n으로 데이터를 넘겨주면 n-1개까지 읽고 마지막은 항상 NULL 처리된다. 
+        (여기서 마지막이란 buf 의 마지막값 인덱스와 읽어들인 값이 k(k<n) 이라면 k+1가 '\0' 으로 바뀜을 의미한다.
   그리고 fgets() 재호출 시 나머지 값들을 읽어온다.
   gets() 시 표준 입력을 받을 떄, '\n'을 NULL로 대체해서 읽는 함수이다..*/
 #include <stdio.h>
@@ -97,5 +99,31 @@ char *gets (char *buf);                   // stdin으로 buf에 입력받음
 
 
 /* 10. fputs, puts : 문자열을 출력받는 함수
-  fputs() 의 경우 : FILE *fp 에 인자 str이 가리키는 
+  fputs() 의 경우 : FILE *fp 에 인자 str 를 출력하는데 ★ NULL과 개행 문자 '\n' 는 출력하지 않는다.
+  puts() 의 경우  : FILE *fp 에 인자 str 를 출력하는데 ★ NULL 를 개행문자 '\n' 로 바꿔서 출력한다.
   */
+#include <stdio.h>
+int fputs (const char* str, FILE *fp);
+int puts (const char *str);
+  return 성공시 0이 아닌값, 실패시 -1 (EOF);
+
+/* 11. fread, fwrite : 바이너리 파일 입출력 : 구조체를 한꺼번에 저장할 때 매우 유용 (void*) ptr 타입으로 받기 떄문 
+ * fread (&구조체변수, sizeof(구조체변수), 1, fp); //n_obj는 구조체나 객체의 개수 처럼 사용
+ */
+#include <stdio.h>
+size_t fread (void *ptr, size_t size, size_t n_obj, FILE *fp);  //n_obj : 구조체나 객체의 개수. 바이너리 파일을 읽는데 사용
+size_t fwrite (void *ptr, size_t size, FILE *fp);               // 바이너리 파일을 쓰는데 사용.
+  return 성공적으로 읽거나 쓴 객체의 개수 (obj개수);
+
+/* 12. ftell, fseek, rewind : 파일 오프셋 위치 정보 / 수정 / 처음으로 되돌림 함수*
+ * ftell : 파일의 처음(SEEK_SET)으로부터 몇 '바이트' 떨어져 있는가? 알려주는 함수. 해당 바이트값 return (이 값은 fseek( ,long offset, )에 쓰임
+ * fseek : ★ fp 가 open 되어있을 떄 쓸 수 있고, whence + offset 만큼 파일 오프셋을 수정함.
+ *           주의할 점은 ★★ lseek과 다르게 return 값이 파일 오프셋이 아니라 0을 return함
+ * rewind : 파일의 시작점으로 파일 오프셋을 되돌림. == fseek(fp, 0, SEEK_SET); 
+ */
+#include <stdio.h>
+long ftell (FILE *fp);                          // 파일 오프셋이 파일시작점(0)으로부터 몇 바이트 떨어져있는가?
+  return 시작점(0)으로부터 몇 바이트 떨어져있는지 long으로 반환;
+int fseek(FILE *fp, long offset, int whence);   // 파일 오프셋 수정 (whence+offset)
+  return ★ 성공 시 0, 실패 시 0이 아닌값;
+void rewind(FILE *fp);                          // 파일 오프셋을 SEEK_SET(0) 으로 되돌림.
