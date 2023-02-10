@@ -127,3 +127,31 @@ long ftell (FILE *fp);                          // 파일 오프셋이 파일시
 int fseek(FILE *fp, long offset, int whence);   // 파일 오프셋 수정 (whence+offset)
   return ★ 성공 시 0, 실패 시 0이 아닌값;
 void rewind(FILE *fp);                          // 파일 오프셋을 SEEK_SET(0) 으로 되돌림.
+
+/* 13. ftello, fseeko :  파일 오프셋 위치 정보 / 수정 (타입 확장버젼) 
+ * 앞의 ftell과 fseek하고 다 똑같은데 long -> off_t 로 바뀔 뿐이다. 이는 long보다 큰 파일 offset이 주어졌을 때
+ * off_t 타입으로 재지정함으로서 파일 오프셋을 설정할 수 있게 하기위함
+ */
+#include <stdio.h>
+off_t ftello (FILE *fp);                          // 파일 오프셋이 파일시작점(0)으로부터 몇 바이트 떨어져있는가?
+  return 시작점(0)으로부터 몇 바이트 떨어져있는지 long으로 반환;
+int fseeko (FILE *fp, off_t offset, int whence);   // 파일 오프셋 수정 (whence+offset)
+  return ★ 성공 시 0, 실패 시 0이 아닌값;
+
+/* 14. fgetpos, fsetpos : 파일 오프셋 현재 위치를 얻어 pos에 저장한 후 .. 오프셋 작업 후 .. 다시 현재위치로 되돌리는 함수 
+ * 현재 스트림의 오프셋 위치를 기억하기 위한 함수
+ */
+#include <stdio.h>
+int fgetpos (FILE *fp, fpos_t pos);               // pos에 현재 파일 offset 저장
+  return 성공 시 0, 실패시 1;
+int fsetpos (FILE *fp, fpos_t pos);               // pos에 들어있는 offset으로 되돌림.  ㅂ1
+  return 성공시 0, 실패시 0이 아닌값 -> errno 설정;
+
+/* 15. printf, fprintf, sprintf, snprintf : 가변적인 서식문자 출력함수 */
+#include <stdio.h>
+int printf (const char* format, ...);                         // 표준출력(stdout) 으로 서식문자 출력
+int fprintf (FILE *fp, consth char* format, ...);             // fp 에 서식문자 출력
+  return 성공시 출력된 문자개수, 에러시 음의 값;
+int sprintf (char *buf, const char *format, ...);             // buf 에 서식문자 저장(출력)
+int snprintf (char *buf, size_t n, const char *format, ...);  // buf 에 n바이트만큼 서식문자 저장 (출력) : 더안전함(buffer Overflow 방지)
+  return 성공시 배열에 저장된 문자개수, 에러시 음의값;
