@@ -7,7 +7,7 @@
 2-2. 터미널이란? :Linux 서버에 SSH로 연결할 때 '로컬 컴퓨터에서 실행'하고 '명령을 입력하는 프로그램';
 2-3. int isatty(int fd) 해당 파일 디스크립터가 terminal 인지 확인해주는 함수 :맞으면-> 0(True), 틀리면 1(False);
 3. system(char *str)  : 입력받은 문자열을 system 쉘 입력으로 바꿔서 실행해줌;
-
+4. ★ 디버그모드에서 strerror(errno) 해주면 애러넘버를 받을 수 있다.
 /* 1. fopen, freopen, fdopen : FILE *fp 구조체 변수를 만드는 함수
   
   freopen 함수같은 경우 -> 이미 열려있는 fp 를 close해서 닫고 path의 fp로 다시 오픈하는 함수이다.
@@ -100,12 +100,13 @@ char *gets (char *buf);                   // stdin으로 buf에 입력받음
 
 /* 10. fputs, puts : 문자열을 출력받는 함수
   fputs() 의 경우 : FILE *fp 에 인자 str 를 출력하는데 ★ NULL과 개행 문자 '\n' 는 출력하지 않는다.
+        -> 문자처리된 "\n"은 인식은 되지만, "example\n" 이라고 저장되면 "example" 까지만 들어가고 \n은 개행처리를 해주는 식.
   puts() 의 경우  : FILE *fp 에 인자 str 를 출력하는데 ★ NULL 를 개행문자 '\n' 로 바꿔서 출력한다.
   */
 #include <stdio.h>
 int fputs (const char* str, FILE *fp);
 int puts (const char *str);
-  return 성공시 0이 아닌값, 실패시 -1 (EOF);
+  return 성공시 0이 아닌값, 실패 시 -1 (EOF);
 
 /* 11. fread, fwrite : 바이너리 파일 입출력 : 구조체를 한꺼번에 저장할 때 매우 유용 (void*) ptr 타입으로 받기 떄문 
  * fread (&구조체변수, sizeof(구조체변수), 1, fp); //n_obj는 구조체나 객체의 개수 처럼 사용
@@ -145,9 +146,11 @@ int fseeko (FILE *fp, off_t offset, int whence);   // 파일 오프셋 수정 (w
 int fgetpos (FILE *fp, fpos_t pos);               // pos에 현재 파일 offset 저장
   return 성공 시 0, 실패시 1;
 int fsetpos (FILE *fp, fpos_t pos);               // pos에 들어있는 offset으로 되돌림.  ㅂ1
-  return 성공시 0, 실패시 0이 아닌값 -> errno 설정;
+  return 성공시 0, 실패 시 0이 아닌값 -> errno 설정;
 
-/* 15. printf, fprintf, sprintf, snprintf : 가변적인 서식문자 출력함수 */
+/* 15. printf, fprintf, sprintf, snprintf : 가변적인 서식문자 출력함수 
+ * %[플리그][필드 넓이][정밀도][길이수정자][변환 형식]
+ */
 #include <stdio.h>
 int printf (const char* format, ...);                         // 표준출력(stdout) 으로 서식문자 출력
 int fprintf (FILE *fp, consth char* format, ...);             // fp 에 서식문자 출력
@@ -155,3 +158,35 @@ int fprintf (FILE *fp, consth char* format, ...);             // fp 에 서식�
 int sprintf (char *buf, const char *format, ...);             // buf 에 서식문자 저장(출력)
 int snprintf (char *buf, size_t n, const char *format, ...);  // buf 에 n바이트만큼 서식문자 저장 (출력) : 더안전함(buffer Overflow 방지)
   return 성공시 배열에 저장된 문자개수, 에러시 음의값;
+
+/* 16. scanf, fscanf, sscnf : 서식문자 입력 함수
+ * 서식문자 입력 % 와 하나라도 부합하지 않으면 중지되거 나머지 부분은 읽히지 않는다.
+ * %[*][필드 넓이][길이 수정자][변환형식]
+ * char buffer[256]="name:홍길동 num:12 age:20"; ┐
+ * sscanf(buffer,"name:%s num:%d age:%d",name,&num,&age);
+ */
+#include <stdio.h>
+int scanf(const char *format, ...);                           // 표준 입력을 받아 해당 변수값들에 저장.
+int fscanf (FILE *fp, const char *format, ...);               // 서식문자의 값을
+int sscanf (char *buf, const char *format, ...);              // 서식문자 값을 buf에 저장
+  return 성공시 입력항목의 개수, 어떠한 변화도 일어나기 전에 입력이 끝나면 EOF, 읽기 에러발생 시 EOF 발생 후 ->errno 설정;
+
+/* 17. fileno : 오픈된 fp 로부터 fd(파일디스크립터) 를 얻는 함수. */
+#include <stdio.h>
+int fildno (FILE *fp);                                         // FILE *fp -> int fd 파일디스크립터 추출
+  return 스트림에 연관된 파일디스크립터 실패시 -1 -> errno설정;
+
+/* 18~19. tmpnam, tmpfile, trempnam : 임시파일 생성 
+ * tmpnam : 임시파일명을 받는다.(NULL이면 만들기만하고, ptr을 넣어주면 해당 값에 문자열포인터를 할당해준다.)
+ *      프로그램이 종료되도 파일이 삭제되지 않으므로 주의할 것. (rename이나 unlink를 해줄것)
+ *       만드는 도중 remove를 시도해보았으나 'NO Such File or Directory' 발생 + 실제로 찾아보니 안보이는 문제발생.
+ * tmpfile : 임시파일을 무자위로 만들어 사용한 뒤 프로그램이 종료되면 해당 파일은 지워진다.
+ * tempnam : 디렉토리(directory), 5자 이내의 접두어(prefix) 를 설정하여 임시파일명을 만들 수 있다
+               :  파일 명을 만드는거지 파일을 만들어 주는 것은 아니다. 만들려면 해당 이름으로 open으로 해줘야한다.
+ */
+#include <stdio.h>
+#include <stdlib.h>
+char* tmpnam (char *ptr);                                   // 문자열 ptr에다가 임시네임을 만들어서 할당해줌.
+char* tempnam (const char *dictionary, const char *prefix)  // dictionary 경로와 5자 이내의 prefix를 조합하여 임시명을 만들어줌.
+FILE* tmpfile (void);                                       // stdin 내부에서 임시파일을 만들어줌.
+
