@@ -75,3 +75,11 @@ int setjmp (jmp_buf env);                          // setjmp 위치까지 스택
  return 자기호출시 0, longjmp에 의한 호출 시 longjmp의 val값;
 void longjmp (jmp_buf env, int val);               // env 위치에 저장된 장소로 goto
 
+
+/* 7. getrlimit, setrlimit : 프로세스의 적용된 자원의 한계값 을 탐색/설정 하는 함수
+ *  자원 한계에는 약한한계(Soft Limit) 와 강한한계 (Hard Limit)
+ */
+#include <sys/resoucre.h>
+#include <sys/times.h>
+int getrlimit (int resource, struct rlimit *rlptr);
+int setrlimit (int resource, struct const rlimit *rlptr);
