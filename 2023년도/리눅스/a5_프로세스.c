@@ -33,7 +33,7 @@ int on_exit( void(*func)(int, void*), void* arg);   // 종료처리과정 중 �
  *    LINUX에서 메모리는 자유리스트(free list)를 통해 적절히 포인터를 조정해서 메모리 블록을 가져온다.
  *    만약, 메모리 풀에서 원하는 블록이 없을 경우에는 프로세스의 heap(힙) 크기를 조정할 수 있는 sbrk() 시스템콜을 하여
  *    시스템으로부터 더 많은 메모리를 가져올 수 있다.
- *    ★ realloc의 size는 새로 할당할 전체크기의 사이즈를 할당해준다.
+ *    ★ realloc의 size는 새로 할당할 전체크기의 사이즈로 설정해야한다. (늘어난 크기가 아닌, 늘어난 전체크기를 넣어야한다.)
  *
  *  <메모리 할당 시 주의할 점> 
  * A. 이미 할당해제한 메모리 블록 (자유 메모리 풀에 있는 메모리블록) 을 다시 free를 하는 경우 
@@ -59,5 +59,5 @@ int putenv (char* str);                                             // str = "na
 int setenv (const char *name, const char *value, int rewrite);      // name="name", value="value" 값으로 환경변수 설정, rewrite는 Overwrite 여부 확인
   return 성공시 0, 실패시 -1 -> errno 설정;                     
 int unsetenv (const char *name);                                    // name에 해당하는 환경변수 삭제.
-  return 성공시 0, 실패시 -1 -> errno 설정;
+  return 성공시 0, 실패시 (해당 이름이 없는경우) -1 -> errno 설정;
 
