@@ -42,7 +42,7 @@ int on_exit( void(*func)(int, void*), void* arg);   // 종료처리과정 중 �
  * B. free를 제대로 하지않으면 메모리들이 프로세스 중 지속적으로 누적이되어 메모리 누출 (Memory Leak) 이 발생하여 
  *      프로세스 실행속도에 영향을 미친다.
  */
-#include <stdlib.h>
+#include <stdlib.h> 
 void* malloc (size_t size);                         // size 공간만큼 자유메모리(free memory) 에서 메모리공간을 할당받음
 void* realloc (void* ptr, size_t newsize);          // ptr 메모리공간의 크기를 newsize로 다시 할당받음 (원본데이터는 변하지않음)
 void* calloc (size_t obj_size, size_t count);       // 개당 메모리블럭 사이즈(obj_size)를 count개수만큼 메모리공간에 할당받고 이를 다 0으로 채움.
@@ -60,4 +60,18 @@ int setenv (const char *name, const char *value, int rewrite);      // name="nam
   return 성공시 0, 실패시 -1 -> errno 설정;                     
 int unsetenv (const char *name);                                    // name에 해당하는 환경변수 삭제.
   return 성공시 0, 실패시 (해당 이름이 없는경우) -1 -> errno 설정;
+
+
+/* 6. setjmp, longjmp : 다른 함수로 jump 하는 기능 (goto 확장판)
+ *  goto문은 다른 함수로의 jump가 불가능하지만, setjmp, longjmp를 이용하면 다른 함수로의 jump가 가능해진다.
+ *  원리는 setjmp(jmp_buf env); 를 할 때 해당 위치에서의 레지스터, 스택 환경 등을 env 구조체에 저장해놓고 
+ *  longjmp를 호출해 그 위치로 돌아가는 것이다.
+ *  ++ longjmp(jmp_buf env, int val) 에서 val은 setjmp의 return값이 되어 setjmp 을 호출했을 때 어느 longjmp에서 분기가 되었는지 판단가능하다.
+ *  + 컴파일러 최적화(gcc -o 실행파일 소스파일 -0) 을 해주면 setjmp를 할 때 해당위치까지 '지역변수' 까지도 모두 저장해서 분기가 가능하다.  
+ *  + ★ jmp_buf는 '전역변수' 로 선언해야한다!
+ */
+#include <stdjmp.h>
+int setjmp (jmp_buf env);                          // setjmp 위치까지 스택/레지스터 환경상태를 env에 저장함 (-0 옵션 시 지역변수도 저장) 
+ return 자기호출시 0, longjmp에 의한 호출 시 longjmp의 val값;
+void longjmp (jmp_buf env, int val);               // env 위치에 저장된 장소로 goto
 
