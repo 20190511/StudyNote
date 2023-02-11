@@ -1,5 +1,8 @@
-/* 0. Shell 명령어 및 Others */
- 1. find            : 현재 할당된 메모리 값들을 볼 수 있음;
+/* 0. Shell 명령어 및 C언어 문법 */
+ 1. find                     : 현재 할당된 메모리 값들을 볼 수 있음;
+ 2. char *envp[] 를 함수 매개변수로 포인터 자체로 받고 싶은 경우 (복사 연산 없이);
+      void XXX (char ***ptr); 로 선언하면 된다. <- 실 사용시 XXX (&envp);
+ 3. #define AA(X)  AA(#X,X)  : 매크로 선언 때 #를 붙이면 해당 변수를 문자열화 해서 받을 수 있다. 
 
 
 /* 1. exit, _Exit, _exit : 프로세스 종료 함수 
@@ -77,9 +80,45 @@ void longjmp (jmp_buf env, int val);               // env 위치에 저장된 �
 
 
 /* 7. getrlimit, setrlimit : 프로세스의 적용된 자원의 한계값 을 탐색/설정 하는 함수
- *  자원 한계에는 약한한계(Soft Limit) 와 강한한계 (Hard Limit)
+ *  자원 한계에는 약한한계(Soft Limit) 와 강한한계 (Hard Limit) 가 있다
+ *  Soft-Limit는 프로세스에 시그널까지로 끝낼 수 있지만, Hard-Limit 를 초과해서 자원을 사용할 수는 없다. (루트만 Hard-limit 를 올릴 수 있다.)
+ *  일반 사용자는 0 ~ rlim_max 사이의 rlim_cur 값을 조정할 수 있을 뿐이다.
+ *  C언어에서는 이 Soft/Hard limit 를 정의한 구조체를 struct rlimit 로 제공하고 있다.
+ *        <struct rlimit>
+ *           rlim_t rlim_cur;   //soft limit (0~rlim_max 사이의값)
+ *           rlim_t rlim_max;   //hard limit
  */
 #include <sys/resoucre.h>
 #include <sys/times.h>
-int getrlimit (int resource, struct rlimit *rlptr);
-int setrlimit (int resource, struct const rlimit *rlptr);
+//resource 는 sys/resource에 매크로로 설정되어있음
+int getrlimit (int resource, struct rlimit *rlptr);                  // 해당 resource에 해당하는 rlimit rlptr 구조체 설정
+int setrlimit (int resource, struct const rlimit *rlptr);            // 해당 resource에 해당하는 rlimit rpltr 구조체로 재설정
+ return 성공시 0,  실패시 -1 -> errno 설정;
+
+
+/* 8. getpid, getppid, getuid, geteuid, getgid, getegid : PID/ID (프로세스ID/ID)를 얻어오는 함수 
+ * 프로세스는 각 프로세스마다 자신의 고유의 ID가 존재한다. 이는 고유의 유일한 속성이기 때문이다.
+ * PID=0 프로세스 : 디스크에 존재하지 않고 메모리에 존재하는 프로세스로 (fork() 호출 시 자식 프로세스는 자신의 PID가 0으로 반환된다)
+ * ex) init 프로세스는 PID = 1 이다 (UNIX/LINUX 부팅 시 가장먼저 실행되는 프로세스)  
+ *
+ * pid_t 는 32비트 정수값 = int 이다.
+ * getpid   : 호출한 프로세스 PID
+ * getppid  : 호출한 부모 프로세스 PID
+ * getuid   : 호출한 실제 사용자 ID
+ * geteuid  : 호출한 유효 사용자 ID
+ * getgid   : 호출한 프로세스의 그룹 ID
+ * getegid  : 호출한 프로세스의 유효 그룹 ID
+ */
+
+#include <unistd.h>
+#include <sys/types.h>
+pid_t getpid (void);            // 호출한 프로세스 PID
+pid_t getppid (void);           // 호출한 부모 프로세스 PID
+pid_t getuid (void);            // 호출한 실제 사용자 ID
+pid_t geteuid (void);           // 호출한 유효 사용자 ID
+pid_t getgid (void);            // 호출한 프로세스의 그룹 ID
+pid_t getegid (void);           // 호출한 프로세스의 유효 그룹 ID
+ return 성공 시 PID;
+
+/* 9. fork */
+
