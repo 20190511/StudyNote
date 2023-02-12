@@ -348,6 +348,12 @@ pid_t getsid (pid_t pid);                     // pid 가 속한 세션 리더 �
 /* tcgetpgrp, tcsetpgrp, tcgetsid : 전경프로세스 (Foreground Process group) 그룹 프로세스 ID 관리 함수
  *            제어터미널에 배정되어 있는 프로세스가 tcgetpgrp를 호출하는 방식.
  *            (제어터미널+시그널 부분 공부 후 다시 공부)
+ *
+ *            tcgetpgrp() 예제 설명: 부모 프로세스가 3초뒤에 종료되어 자식 프로세스는 배경프로세스그룹 (Background Process Group)으로 간다.
+ *                               부모 프로세스가 죽은 자식 프로세스는  고아 프로세스가 되고 ppid 가 변경된다. 
+ *                                   (pgrp Foreground PGRP(Process group ID)는 변경되지 않는다.)
+ *                               고아 프로세스가 된 자식프로세스는 SIGHUB (세션종료로 인한 시그널 (ctrl+z)) 와 SIGCONT (실행재개) 시그널을 동시에 받게된다.
+ *                               고아 프로세스는 Background process 에 있기 때문에 '표준입출력'을 받으면 오류가난다! 
  */
 #include <unistd.h>
 pid_t tcgetpgrp (int fd);                // Foreground Process Group 그룹 ID (그룹리더ID 반환)
