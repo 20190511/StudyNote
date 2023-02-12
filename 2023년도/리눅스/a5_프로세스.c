@@ -4,8 +4,11 @@
       void XXX (char ***ptr); 로 선언하면 된다. <- 실 사용시 XXX (&envp);
  3. #define AA(X)  AA(#X,X)  : 매크로 선언 때 #를 붙이면 해당 변수를 문자열화 해서 받을 수 있다;
  4. file descriptor 의 경우 표준 입/출력/에러는 매크로로도 설정되어 있다;
-       return STDIN_FILENO : 0, STDIN_FILENO : 1, STDERR_FILENO : 2
-
+       return STDIN_FILENO : 0, STDIN_FILENO : 1, STDERR_FILENO : 2;
+ 5. 자식프로세스 status는 앞부분(하위) 8비트 + 상위 8비트 (??값) 으로 전달되는데 WEXITEDSTATUS(status)로 호출하기 싫다면;
+       status >> 8; 로 호출해도된다;
+ 6. int* 값을 NULL 로 전달하고 싶으면 (int*)NULL 혹은 (int*)0 으로 전달해도된다;
+ 7. echo    "전달 문자열"     : 현재 전달할 문자열 echo 출력
 
 /* 1. exit, _Exit, _exit : 프로세스 종료 함수 
  * exit는 표준입출력 라이브러리, 종료처리부들 등을 정리하고 종료 -> 부모에게 status 전달
@@ -151,4 +154,60 @@ pit_d vfork(void);
          에러 시 -1 -> errno 설정;
 
 
-/* 11. 
+/* 11. wait, waitpid : 자식 프로세스들의 종료상태를 기다렸다가 자식 프로세스의 종료 status를 받아오는 함수.
+ *     자식프로세스가 종료되면 자식프로세스의 status가 하위(앞의 비트) 8비트로 표현됨 (0~255까지 표현가능)
+ *     종료상태를 알고싶으면 WIFEXITEDSTATUS(status) 를 넣으면 해당 값을 알 수 있음.
+ *     -wait() 의 경우 '모든' 자식 프로세스가 종료해야 부모 프로세스 실행.
+ *     -waitpid의 options 값은 상수(비트) 로 지정되어 있으며, | 연산자를 넣어 계산할 수 있음
+ *      ++ int *statloc 값을 받기 싫으면 (int*)NULL 혹은 (int*)0 으로 넘겨주면된다.
+ *     <waitpid option 상수들>
+ *     a. WCONTINUED   : 자식 프로세스가 중지되었다가 SIGCONT 시그널로 재게되어도 return
+ *     b. WNOHANG      : 자식 프로세스가 종료되지 않아도 즉시 종료 후 0 리턴 (자식프로세스가 종료되면 자식프로세스 pid 리턴)
+ *     c. WUNTRACED    : 자식 프로세스가 종료 + '중지(멈춤)' 되어도 그 상태 return
+ */
+#include <sys/types.h>
+#include <sys/wait.h>
+pid_t wait (int *statloc);                                  // 자식프로세스가 종료할 때까지 멈추었다가 부모 재게, statloc에 자식프로세스 하위비트값전달.
+pid_t waitpid (pid_t pid, int* statloc, int options);       // 위의 option에 따라 해당 pid의 자식 프로세스 처리.
+ return 성공시 자식프로세스ID ,에러시 -1;
+ return (waitpid의 경우 options=WNOHANGS && 자식 프로세스가 종료되지 않으면) 0;
+
+/* 12. waitid : waitpid와 비슷하나, 아래의 차이점 존재
+ * idtype_t idtype, id_t id : idtype_t  enum {P_PID=0,P_PGID=1,P_ALL=2} 으로 전달 .
+ *                            해당 enum값은 id_t (unsigned int 타입) id 로 전달 가능
+ * siginfo_t *info_pointer  : 자식 프로세스의 시그널 정보를 상세하게 저장해줌.
+ * int options              : 위의 waitpid option과 동일하게 기능 (몇 기능 추가)
+ */
+#include <sys/types.h>
+#include <sys/wait.h>
+int waitid (idtype_t idtype, id_t id, siginfo_t *info_pointer, int options); // 해당 idtype에 따라 wait기능 함수 작동
+ return waitpid와 동일하게 작동;
+
+
+/* 13. wait3, wait4 : wait() + 자식 프로세스 자원 사용량 정보를 얻는 함수
+ *      wait3 에서 pid를 지정할 수 있으면 wait4 이다
+ *      프로세스 사용정보는 rusage 구조체를 이용해 전달, 해당 구조체는 CPU 시간, 시스템 CPU 시간, page fault 횟수 등.. 저장  (resource usage)
+ */
+#include <sys/resource.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/wait.h>
+pid_t wait3 (int *statloc, int options, struct rusage *resage);             // 위에 설명 wait + 자식 프로세스 리소스 사용량 정보 담아줌
+pid_t wait4 (pid_t, pid, int *statloc, int options, struct rusage *resage); // wait3 에서 pid 지정 가능
+ return waitpid와 동일하게 기능;
+
+/* 14. execl, execv, execle, execve, execlp, execvp : 새로운 프로그램 대체 
+ *   l : char* arg0, arg1, arg2, ... , (char*)NULL : 리스트 타입으로 argument 전달 (arg0 : 파일명, ★마지막은 항상 NULL);
+ *   v : argv[] 으로 argumnet 전달
+ *   p : 경로 지정없는 실행파일 실행    (PATH 에서 실행파일을 찾음)
+ *   e : 환경변수 envp[] 전달 // NULL일 경우 전역변수 environ 사용
+ *
+ *    exec 계열 함수들을 기존의 부모프로세스를 자식프로세스가 '완전히 대체'해서 사용
+ *         : 현재 프로세스의 이미지 (텍스트, 자료, 힙, 스택 구역) 들은 기존파일에서 완전히 대체
+ *         ++ 실행파일의 경우 기계어 코드이면 직접 실행 OR 아니면 '스크립트 쉘' 로 인식하여 "/bin/sh" 실행
+ *         ++ 명령라인 arg들과 env[] 최대 개수는 ARG_MAX 상수에 의해 제한될 수 있음
+ *         ++ 새로 실행된 프로세스의 파일디스크립터(fd) 는 부모프로세스가 오픈하면 그대로 오픈되어 있지만,
+ *            부모 프로세스 시그널 값은 초기 설정으로 복원된다. -> 호출 프로세스가 설정한 handler 역시 초기설정으로 복원된다! (핸들러가 없는 상태로 작동)
+ *            부모 프로세스에서 ignore 되었던 시그널은 계속 ignore 상태가 된다!
+ *         ++ 하지만, 경보(alarm) 까지 남은 시간 등은 상속된다.
+ */
