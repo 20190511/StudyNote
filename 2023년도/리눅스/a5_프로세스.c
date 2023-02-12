@@ -8,8 +8,16 @@
  5. 자식프로세스 status는 앞부분(하위) 8비트 + 상위 8비트 (??값) 으로 전달되는데 WEXITEDSTATUS(status)로 호출하기 싫다면;
        status >> 8; 로 호출해도된다;
  6. int* 값을 NULL 로 전달하고 싶으면 (int*)NULL 혹은 (int*)0 으로 전달해도된다;
- 7. echo    "전달 문자열"     : 현재 전달할 문자열 echo 출력
-
+ 7. echo    "전달 문자열"        : 현재 전달할 문자열 echo 출력
+ 8. find [옵션] [경로] [표현식]  :  해당 옵션으로 해당경로의 표현식을 찾겠다;
+    find  -maxdepth n           : 검색할 하위 디렉토리의 최대 깊이 지정;
+    find  -name "파일 이름"      : 해당 파일 이름을 찾겠다;
+ ex)find / -maxdepth 4 -name "stdio.h" : 루트경로로부터 디렉토리 깊이가 4까지의 "stdio.h"를 모두 찾겠다.
+ 9.  cat /etc/passwd | grep "junhyeong" : 사용자 ID 를 볼 수 있는 쉘 문법
+ 10. pwd                        : 해당 위치의 절대경로
+ 
+ 
+ 
 /* 1. exit, _Exit, _exit : 프로세스 종료 함수 
  * exit는 표준입출력 라이브러리, 종료처리부들 등을 정리하고 종료 -> 부모에게 status 전달
  * _Exit, _exit 는 위의 부분들을 정리하지 않고 즉시 종료.
@@ -210,4 +218,85 @@ pid_t wait4 (pid_t, pid, int *statloc, int options, struct rusage *resage); // w
  *            부모 프로세스 시그널 값은 초기 설정으로 복원된다. -> 호출 프로세스가 설정한 handler 역시 초기설정으로 복원된다! (핸들러가 없는 상태로 작동)
  *            부모 프로세스에서 ignore 되었던 시그널은 계속 ignore 상태가 된다!
  *         ++ 하지만, 경보(alarm) 까지 남은 시간 등은 상속된다.
+ *         +++ shell 명령어 같은 경우에는 filename/pathname 에 프로그램 경로(이름) 을 적고 argv[0] 에 다시 프로그램명을 적어야하지만
+ *             사용자 유저 프로그램의 경우에는 argv[0]에 넘겨줄 인자부터 적어도 호출된다.
+ *             execl("./execl", "execl", "ssu_test1", "ssu_test2", "ssu_test3", (char*)NULL);
+ *              >>>argv[0]=execl
+ *                 argv[1]=ssu_test1
+*                  argv[2]=ssu_test2
+*                  argv[3]=ssu_test3
  */
+#include <unistd.h> /*새 프로그램 실행 함수 (자식프로세스가 부모프로세스를 대체함)*/
+int execl (const char *pathname, const char* argv0, ... (char*)NULL);               // 파일경로 + 가변인자(arg)
+int execle (const char* pathname, const char* argv0, ...(char*)NULL, char* env[]);  // 파일경로 + 가변인자(arg) + 환경변수
+int execlp (const char* filename, const char* argv0, ...(char*)NULL);               // 파일명 + 가변인자(arg)
+int execv (const char* pathname, const char* argv[]);                               // 파일경로 + argv 문자열배열
+int execve (const char* pathname, const char* argv[], const char* env[]);           // 파일경로 + argv 문자열배열 + 환경변수
+int execvp (const char* filename, const char* argv[]);                              // 파일명 + argv 문자열배열
+ return 성공시 값 없음, 실패시 -1 -> errno 설정;
+
+/* 15. setuid, setgid : 사용자 ID 변경함수 
+ *     현재 프로세스가 ROOT 권한을 가진 경우 : 해당 uid로 실제/유효/저장된 사용자 ID를 모두 변경
+ *     현재 프로세스가 ROOT 권한이 없는 경우 : 해당 uid로 유효사용자 ID만 변경
+ *
+ *     <사용자 ID 정리>
+ *     유효사용자 ID (EUID)     : 프로그램 파일을 소유한 ID (프로세스 실행 자격을 확인하는 ID)
+ *     실제사용자 ID (RUID)     : 프로그램을 실제로 실행시키는 사용자 ID
+ *     저장된 사용자 ID (SUID)  : exec() 실행 전 유효 사용자 ID (EUID) (fork 상속받을 때 부모의 SUID 도 상속받음)
+ *
+ *     [예시]
+ *      <초기> -fork()-> <자식프로세스>
+ * RUID  123     ->          
+ * EUID  123     ->          456
+ * SUID                      123
+ */
+#include <unistd.h>
+#include <sys/types.h>
+int setuid (uid_t uid);                      // RUID,EUID,SUID 를 uid로 변경 (Root 권한시) || EUID 를 uid 로 변경 (일반 사용자일시)
+int setguid (uid_t gid);                     // RGID,EGID,SGID 를 gid로 변경 (Root 권한시) || EGID 를 gid 로 변경 (일반 사용자일시)
+ return 성공시 0, 실패시 -1 => errno(EPERM) 설정;
+
+/* 16. setreuid, setregid : 실제ID와 유효ID를 맞바꾸는 시스템콜 
+ *     : 권한이 없는 사용자라도 실제사용자 ID와 유효사용자 ID 를 맞바꾸어 교환할 수 있다.
+ */
+#include <unistd.h>
+#include <sys/types.h>
+int setreuid (uid_t ruid, uid_t egid);      // RUID <-> EGID 교환
+int setregid (uid_t rgid, uid_t egid);      // RGID <-> EGID 교환 
+ return 성공시 0, 실패시 -1 -> errno 설정;
+
+/* 17. seteuid, setegid : EUID | EDID 를 uid로 변경하는 함수
+ *     sudo 실행을 통해 root권한으로 파일을 만들 수 있다.
+ */
+#include <unistd.h>
+#include <sys/types.h>
+int seteuid(uid_t uid);                     // EUID <- uid 로 변경
+int setegid(uid_t gid);                     // EGID <- gid 로 변경
+ return 성공시 0, 실패시 -1 -> errno 설정;
+ 
+ 
+ /* 18. system : 프로세스 내에서 쉘과같은 행동을 할 수 있게 해주는 함수
+  *         system() 함수는 fork(), exec(), waitpid() 함수와 같이 행동한다.
+  *         그래서 system() 함수의 return값은 3개를 가질 수 있으며 각 다음과 같다.
+  *         fork() 호출실패, waitpid() status 값이 EINTR 를 뱉어내는 오류
+  *         exec() 계열 함수 호출 실패 : exit(127) :"command not found" 와 같은 오류 발생
+  *         이외의 오류 발생 시 -1 리턴 -> errno 설정
+  *         그 이외의 값들은 쉘의 종료상태를 의미함.
+  *
+  *         ++ cmdstring=NULL 를 대입할 시 해당 프로세스(커널) 에서 system 을 지원하면 0이 아닌값을  return
+  */
+#include <stdlib.h>
+int system (const char *cmdstring);         // shell 커맨드를 프로세스 내에서 사용 가능하게 해줌
+ return 주석처리에 설명되어있음;
+
+
+/* 19. getlogin : 프로그램을 실행하고 있는 사용자의 로그인 아이디 이름 리턴
+ *                하나의 사용자 ID 에 여러개의 로그인 이름이 존재한다면 현재 로그인 된 이름 return
+ *                ★ getlogin은 tmp파일에 접근하여 파일의 내용을 변경시킬 수 있으므로 getpwuid() 사용 추천
+ */
+#include <unistd.h>
+char *getlogin(void);                         // 현재 로그인 중인 사용자 ID 문자열 반환
+ return 성공시 로그인 이름을 담은 문자열을 가리키는 포인터, 실패시 NULL -> errno  설정;
+
+
+  
