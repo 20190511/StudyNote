@@ -15,7 +15,10 @@
  ex)find / -maxdepth 4 -name "stdio.h" : 루트경로로부터 디렉토리 깊이가 4까지의 "stdio.h"를 모두 찾겠다.
  9.  cat /etc/passwd | grep "junhyeong" : 사용자 ID 를 볼 수 있는 쉘 문법
  10. pwd                        : 해당 위치의 절대경로
- 
+ 11. sysconf(SC_CLK_TCK)        : sysconf()는 시스템 정보 검색함수로, SC_CLK_TCK 는 초당 클락 틱 수를 나타내는 상수 인자이다;
+ 12. pstree                     : pstree 명령어는 실행되고 있는 프로세스들간의 연결구조를 트리형식으로 보여줌 
+     pstree -p                  : 실행되고 있는 프로세스의 PID 트리구조를 보여줌;
+
  
  
 /* 1. exit, _Exit, _exit : 프로세스 종료 함수 
@@ -299,4 +302,59 @@ char *getlogin(void);                         // 현재 로그인 중인 사용�
  return 성공시 로그인 이름을 담은 문자열을 가리키는 포인터, 실패시 NULL -> errno  설정;
 
 
-  
+/* 20. times : tms buf 에 대해 User CPU Time 과 System CPU Time 을 구하는 함수
+ *            CPU Time = User CPUTime (사용자 CPU시간) + System CPUTime (시스템 CPU시간) 을 구하는 함수이다.
+ *            clock_t : 초당 CPU 클락 틱 수를 의미한다
+ *            중요한 점은 절대적인 값이 아니므로 times()를 호출한 buf 값을 빼서 상대적인 클락 틱 수를 구하는 방식으로 사용된다.
+ *            여기서 나은 클락 틱 수는 1초당 CPU 클락 틱 수를 구하여서 초를 구할 수 있다
+ */
+#include Clock_t times(struct tms *buf);
+ return 성공시 소비된 클락 시간 값(클락 틱 수) , 실패시 -1 ->errno;
+
+
+/* 21. getpgrp, getpgid, getpgid : 그룹 PID 설정/반환
+ *            모든 프로세스들은 고유의 PID 와 그룹PID(PGID) 를 가진다. <- 하나의 시그널로부터 그룹 내 모든 프로세스를 전달하게 가능
+ *            프로세스 그룹의 리더는 PGID가 PID와 동일하다
+ *            프로세스 그룹 리더는 해당 그룹 내에서 프로세스를 생성할 수 있고 그룹이 존재하는 상태에서 자신을 종료할 수 있다.
+ *            ++ 프로세스 그룹리더가 종료되더라도 그룹 속에 하나라도 프로세스가 존재한다면 그 그룹은 사라지지 않는다. 
+ *               (그룹이 생성된 시점 ~ 그룹이 사라지는 시점) 까지의 시간을 '프로세스 그룹 수명' 이라고 한다.
+ *            ★ 프로세스 그룹은 '자신(현재프로세스' 나 '자식프로세스' 만 설정할 수 있다.
+ *               일반적으로 부모/자식 프로세스 중 뭐가 먼저 실행될 지 모르기 때문에 fork() 를 할 때, 
+ *               자식/부모 모두 setpgid() 를 호출하여 그룹PID를 설정한다.
+ *            getpgid(0) 을 하면 자신(현재 프로세스)의 PGID 가 반환된다.
+ *            setpgid(pid,0) 을 하면 해당 pid를 그룹리더로 하는 pid그룹이 만들어진다.
+ */
+#include <unistd.h>
+pid_t getpgrp (void);                         // 현재 프로세스 그룹 PID 반환
+pid_t getpgid (pid_t pid);                    // pid의 그룹 PID 반환 (pid=0인 경우 현재 프로세스 그룹 pid 반환)
+ return 성공시 그룹 ID, 실패시 -1 ->errno 설정;
+int setpgid (pid_t pid, pid_t pgid);          // pid 를 pgid 그룹에 포함시킴 (pgid=0 인경우 pid가 그룹리더인 프로세스 그룹 생성)
+ return 성공시 0 , 실패시 -1 -> errno 설정;
+
+
+/* 22. setsid, getsid : 세션 리더 설정 
+ *            세션 (Session) : 하나이상의 프로세스 그룹의 집합으로, 대표적인 예시로 터미널이 있다.
+ *            setsid를 호출하는데 pid가 이미 프로세스 그룹 리더라면 setsid는 에러 return
+ *            setsid를 호출하는데 pid가 프로세스 그룹 리더가 아니라면, 세 세션+세 프로세스 그룹을 만들어 세션리더 + 그룹리더로 만든다.\
+ *            getsid 는 pid의 세션리더의 그룹 id (세션리더의 pid) 를 호출해준다.
+ *            ++만약, getsid의 pid=0 이라면 호출한 프로세스의 세션 리더의 프로세스 그룹ID를 리턴한다.
+ */
+#include <unistd.h>
+pid_t setsid (void);                          // 해당 프로세스를 세션 리더 + 프로세스 그룹 리더로 설정
+ return 성공시 프로세스 그룹ID, 실패시 -1 ->errno 설정;
+pid_t getsid (pid_t pid);                     // pid 가 속한 세션 리더 의 프로세스 그룹 ID (프로세스 그룹리더 PID) 반환
+ return 성공시 pid 가 속한 세션리더의 그룹 ID, 실패시 -1->errno설정;
+
+/* tcgetpgrp, tcsetpgrp, tcgetsid : 전경프로세스 (Foreground Process group) 그룹 프로세스 ID 관리 함수
+ *            제어터미널에 배정되어 있는 프로세스가 tcgetpgrp를 호출하는 방식.
+ *            (제어터미널+시그널 부분 공부 후 다시 공부)
+ */
+#include <unistd.h>
+pid_t tcgetpgrp (int filedes);                // Foreground Process Group 그룹 ID (그룹리더ID 반환)
+ return 성공시 전경 프로세스 그룹(foreground Process Group)의 프로세스 그룹 ID, 실패시 -1 -> errno 설정;
+int tcsetpgrp (int filedes, pid_t pgrpid);    // pgrpid(전경프로세스 그룹 ID) 프로세스 그룹에 filedes 프로세스 추가
+ return 성공시 0, 실패시 -1 ->errno 설정;
+
+#include <termios.h>
+pid_t tcgetsid (int filedes);                 // 주어진 파일디스크립터에 해당하는 제어 터미널과 연관된 프로세스그룹 ID 리턴
+ return 성공시 세션리더의 그룹 ID , 실패시 -1 -> errno 설정;
