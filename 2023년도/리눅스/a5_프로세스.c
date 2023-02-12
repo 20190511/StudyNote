@@ -350,11 +350,11 @@ pid_t getsid (pid_t pid);                     // pid 가 속한 세션 리더 �
  *            (제어터미널+시그널 부분 공부 후 다시 공부)
  */
 #include <unistd.h>
-pid_t tcgetpgrp (int filedes);                // Foreground Process Group 그룹 ID (그룹리더ID 반환)
+pid_t tcgetpgrp (int fd);                // Foreground Process Group 그룹 ID (그룹리더ID 반환)
  return 성공시 전경 프로세스 그룹(foreground Process Group)의 프로세스 그룹 ID, 실패시 -1 -> errno 설정;
-int tcsetpgrp (int filedes, pid_t pgrpid);    // pgrpid(전경프로세스 그룹 ID) 프로세스 그룹에 filedes 프로세스 추가
+int tcsetpgrp (int fd, pid_t pgrpid);    // pgrpid(전경프로세스 그룹 ID) 프로세스 그룹에 fd 프로세스 추가
  return 성공시 0, 실패시 -1 ->errno 설정;
 
 #include <termios.h>
-pid_t tcgetsid (int filedes);                 // 주어진 파일디스크립터에 해당하는 제어 터미널과 연관된 프로세스그룹 ID 리턴
+pid_t tcgetsid (int fd);                 // 주어진 파일디스크립터에 해당하는 제어 터미널과 연관된 프로세스그룹 ID 리턴
  return 성공시 세션리더의 그룹 ID , 실패시 -1 -> errno 설정;
