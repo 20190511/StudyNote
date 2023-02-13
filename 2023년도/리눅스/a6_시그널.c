@@ -127,6 +127,20 @@ int sigsuspend (const sigset_t *sigmask);                 // 해당 시그널 �
  return 항상-1 ★, errno는 EINTR 로 설정;
 
 
-/* 10. abort : 프로세스 자신에게 SIGABRT 호출하여 강제종료
+/* 10. abort : 프로세스 자신에게 SIGABRT 호출하여 강제종료  
+ *           프로세스들은 SIGABRT를 무시할 수 없다. 대신 별도의 시느러 핸들러를 두고 종료하기 전에 여러가지 정리작업을 할 수는 있다.
+ */
+#include <stdlib.h>
+void abort(void);                                        // 자신에게 SIGABRT 시그널을 호출시키며 프로세스 강제종료
+
+/* 11. sleep : 프로세스를 seconds 만큼 일시중지시키는 함수
+ *           프로세스 스케쥴과 같은 시스템 다른활동으로 정확하게 seconds 만큼 일시정지 하지는 않을 수 있다
+ *           alarm() 과 비슷하나 , alarm(10) 을 호출하고 3초 뒤에 sleep(5); 를 호출한다면 sleep은 5초후에 return 하지만
+ *           alarm도 원래대로 2초뒤에 return 하는지의 여부는 시스템마다 종속적으로 발생한다.
+ */
+#include <unistd.h>
+unsigned int sleep (unsigned int seconds);               // Seconds 만큼 프로세스 일시중지
+ return 성공시 0, 중간에 다른 sleep가 올 시 남은 초 수;
+
 
 /* 11. sleep : 
