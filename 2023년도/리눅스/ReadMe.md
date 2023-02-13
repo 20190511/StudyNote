@@ -11,5 +11,6 @@ gcc -l : 링크할 라이브러리
 ![image](https://user-images.githubusercontent.com/70988272/216768764-d6d49802-0876-4885-b57c-b152989e416a.png)
 ---
 
-## read And Write 예제 : HELLO.txt 파일을 읽어서 -> HELLO.bak 파일로 복사하기
-![image](https://user-images.githubusercontent.com/70988272/216774923-61126193-aeeb-4f5e-bcd8-f37bda209ca4.png)
+## 7. 쓰레드의 개념
+---
+### 쓰레드란 하나의 프로세스에 여러개의 제어흐름을 두어 프로세스가 동시에 여러개의 작업을 할 수 있도록 해주는 것.
