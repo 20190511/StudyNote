@@ -88,3 +88,19 @@ int sigprocmask (int how, sigset_t* set, sigset_t* oldset);  // how 에 따라 s
 int sigpending (signal_t *set);                             // set에 지금 Block됨 + ★ Pending 된 상태의 시그널 집합을 저장
  return 성공시 0, 실패시 -1 -> errno 설정;
 
+
+/* 7.sigaction : signal() 을 구조체로 전달하여 현대에 더 많이 쓰는 시그널 수정함수 
+ *           해당 signo에 대하여 구조체 sigaction 상태로 만들어준다. (+ 그리고 바뀌기 전 상태는 oldact 구조체에 저장)
+ *           시그널을 구조체 sigaction 를 이용하여 전달해준다. sigaction 구조체는 다음의 멤버변수를 가진다.
+ *           <sigaction>
+ *           void (*sa_handler) (int);                    : 해당 시그널에서 호출할 함수
+ *           sigset_t sa_mask;                            : 해당 시그널 실행 전 블락을 할 시그널set
+ *           int sa_flags;                                : 시그널 옵션 (
+ *           void(*sa_sigaction)(int, siginfo_t *, void*) : sa_flags 가 SA_SIGINFO 일 때 인자를 2개 더 전달해주는 시그널 함수
+ *           ++ 중요한 점은 sa_sigaction을 실행할 때는 위의 sa_handler와 같이 사용하면 안됨 (동일 메모리공간을 사용하는 경우있음)
+ *           +++ 해당 sigaction() 을 호출하면 해당 상태값이 다음 sigaction() 이 호출되기 전까지 상태를 유지한다. (sa_masks가 유지됨)
+ *           +++ 그러므로 signal() 호출 후 sigaction()을 호출했을 때, oldact는 보장해주지않는다.
+ */
+#include <signal.h> //해당 signo 를 act 구조체 형태로 시그널 수정 + oldact에는 바뀌기전 상태의 시그널 sigaction 구조체가 들어감.
+int sigaction (int signo, const struct sigaction *act, struct sigaction *oldact); 
+ return 성공시 0, 실패시 -1 -> errno 설정;
