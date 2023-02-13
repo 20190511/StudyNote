@@ -1,5 +1,6 @@
 /* 0. Shell 문법 */
  1. ./실행파일 &            : 해당 실행파일 pid를 알 수 있음;
+ 2. kill -10 <PID>         : 해당 PID 프로세스에 SIGUSR1 시그널 전달.
 
 /* 0.1. C 언어 테크닉 */
 
@@ -104,3 +105,28 @@ int sigpending (signal_t *set);                             // set에 지금 Blo
 #include <signal.h> //해당 signo 를 act 구조체 형태로 시그널 수정 + oldact에는 바뀌기전 상태의 시그널 sigaction 구조체가 들어감.
 int sigaction (int signo, const struct sigaction *act, struct sigaction *oldact); 
  return 성공시 0, 실패시 -1 -> errno 설정;
+
+/* 8. sigsetjmp, siglongjmp : setjmp, longjmp에서 현재 시그널 비트 셋을 그대로 들고갈 것인지 물어보는 savesgis를 추가한 분기함수
+ *           기존 longjmp,setjmp 는 시스템 핸들러 처리 중 분기를 한다면 자동으로 해당 시그널에서 자동으로 '블락' 처리된다
+ *           그 상태에서 return 되지않고 longjmp를 해버린다면 나중에 시스템호출 | 함수 호출에서 시그널 마스크의 복원이 안 될 수 있다
+ *           이를 해결하기위해 'savesigs' 변수를 두어 해당 변수가 0이아니라면 현재 시그널 마스크를 env에 저장하여 호출하게해준다.
+ */
+#include <setjmp.h>
+int sigsetjmp (sigjmp_buf env, int savesigs);              // savesigs!=0 이면 현재 signal set를 env에 저장하여 분기
+ return 직접호출하는 경우에는 0, 호출해서 리턴된 경우에는 0이 아닌값;
+void siglongjmp (sigjmp_buf env, int val);                 // sigsetjmp 부분으로 분기.
+
+/* 9. sigsuspend : 해당 sigmask 를 시그널 마스크 집합으로 설정하고 + Pause() 처럼 다른 시그널을 기다렸다가 + 원래의 시그널 마스크 집합으로 설정
+ *           sigprocmask() 와 pause() 를 원자적으로 실행하는 함수이다 (마스크셋을 설정하고 다른시그널을 기다리는 동안 가로챌 수 없고,
+ *                                                                   이전의 시그널 마스크 비트로 되돌려준다)
+ *           원자적이란 : 연산 도중 가로챌 수 없으며, 값이 바뀌지 않는 것을 의미한다.
+ *           물론, SIGKILL 이나 SIGSTOP의 경우에는 마스크에 포함시켜도 블락되지않는다. (그리고 프로그램종료)
+ */
+#include <signal.h>
+int sigsuspend (const sigset_t *sigmask);                 // 해당 시그널 마스크로 다른 시그널이 올 때 까지 기다렸다가 원상태 시그널 마스크 set 복귀
+ return 항상-1 ★, errno는 EINTR 로 설정;
+
+
+/* 10. abort : 프로세스 자신에게 SIGABRT 호출하여 강제종료
+
+/* 11. sleep : 
