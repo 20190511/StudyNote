@@ -51,3 +51,40 @@ int raise (int sig);                                       // 자기자신에게
 unsigned int alarm (unsigned int seconds);                  // 해당 seconds 뒤에 SIGALRM 시그널 호출 
   return 이전에 설정된 타이머가 없으면 0, 있으면 이전의 알람의 남은 시간;
 int pause (void);                                           // 다음 시그널이 올 때 까지 
+
+/* 4. sigemptypse, sigfillset, sigaddset, sigdelset, sigismember : 시그널 집합(Signal Set) 비트처리함수
+ *           시그널 마다 1개씩 비트를 처리하여 LINUX에는 63개의 시그널에 대해 63비트의 int 배열이 있다
+ *           후에 이 비트값이 1이면 해당 함수들에 영향을 받음을 의미함 (ex)bitmask)
+ */
+#include <signal.h>
+int sigemptyset (sigset_t *set);                            // set의 모든 멤버 비트값을 모두 0으로 만들겠다
+int sigfillset (sigset_t *set);                             // set의 모든 멤버 비트값을 모두 1으로 만들겠다
+int sigaddset (sigset_t *set, int signo);                   // set에 signo 멤버를 추가하겠다
+int sigdelset (sigset_t *set, int signo);                   // set에 signo 멤버를 삭제하겠다.
+ return 성공시 0, 실패시 -1 -> errno 설정
+int sigismemeber (sigset_t *set, int signo);                // 해당 signo 가 set 에 포함되어있는가(1인가?)
+ return set에 signo가 멤버이면 1 아니면 0, 실패시 -1 -> errno 설정;
+
+
+/* 5. sigprocmask : 해당 시그널 집합을 how에 따라 처리하는 함수
+ *           sigprocmask(how,set,oldset) 중 how는 아래 3가지 모드로 set과 현재 마스크집합을 비교하여 처리하는 연산을 해준다.
+ *           <how 상수>
+ *           SIG_BLOCK    : 현재 시그널집합 ∪ set | 블락 시그널을 추가할 때 사용
+ *           SIG_UNBLOCK  : 기존의 블락된 시그널에서 set의 시그널을 제거함
+ *           SIG_SETMASK  : 해당 set을 새로운 시그널집합으로 사용하겠다.
+ *           
+ *           *oldset 의 경우에는 바뀌기 전 현재 시그널 집합 구조체가 담기게된다. (NULL 인 경우 저장되지 않음)
+ *           ★ set=NULL 이면 how 에 무슨값이 들어가도 새로운 마스크집합이 생성되지 않는다.
+ */
+#include <signal.h>
+int sigprocmask (int how, sigset_t* set, sigset_t* oldset);  // how 에 따라 set을 설정, oldset에는 바뀌기 전 마스크집합 설정
+ return 성공시 0, 실패시 -1 -> errno 설정;
+
+/* 6. sigpending : 블락된 시그널 + 현재 Pending(미처리된) 시그널인 상태의 시그널 집합을 가져오는 함수 
+ *           BLock+Pending 시그널을 sigset_t 구조체로 시그널집합을 가져온다.
+ *           위에 설명된 대로 가져온 시그널 집합을 sigset_t *set 으로 저장한다
+ */
+#include <signal.h>
+int sigpending (signal_t *set);                             // set에 지금 Block됨 + ★ Pending 된 상태의 시그널 집합을 저장
+ return 성공시 0, 실패시 -1 -> errno 설정;
+
