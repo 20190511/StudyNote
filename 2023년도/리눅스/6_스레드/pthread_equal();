@@ -1,0 +1,39 @@
+pthread_equal();
+/** 서브스레드와 메인스레드의 전역변수는 공유된다!*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+void* threads(void *arg);
+pthread_t glo_tid;
+int main(void)
+{
+    pthread_t loc_tid;
+    if (pthread_create(&loc_tid, NULL, threads, NULL) != 0)
+    {
+        fprintf(stderr, "pthread_create Error\n");
+        exit(1);
+    }
+    sleep(5);
+    if(pthread_equal(glo_tid, loc_tid) == 0)
+    {
+        printf("다른 스레드\n");
+        exit(0);
+    }
+    else
+    {
+        printf("같은 스레드\n");
+        exit(0);
+    }
+}
+
+void* threads(void *arg)
+{
+    printf("스레드에서 자신의 스레드 ID를 전역변수에 할당\n");
+    glo_tid = pthread_self();
+    return NULL;
+}
+/*
+스레드에서 자신의 스레드 ID를 전역변수에 할당
+같은 스레드
+*/
