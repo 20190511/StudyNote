@@ -13,11 +13,12 @@ gcc -l : 링크할 라이브러리
 
 ## 7. 쓰레드의 개념
 ---
-### 쓰레드란 **하나의 프로세스** 에 여러개의 제어흐름을 두어 **프로세스가 동시에 여러개의 작업** 을 할 수 있도록 해주는 것
-즉, 쓰레드는 하나의 프로세스에서 독립적인 함수 호출이 가능하여 
-병렬적으로 프로세스의 부분들을 처리할 수 있는 개념이다.  
-쓰레드는 최소 하나의 코어에 하나의 쓰레드는 존재해야하며  
-1코어에 2개이상의 스레드가 존재한다면 이는 멀티스레드(Multithread) 라고 한다   
----
-스레드끼리 공유하는 자원 : 힙 / 코드영역 / 데이터영역  
-스레드가 독리적으로 관리하는 자원 : 스택  
+![image](https://user-images.githubusercontent.com/70988272/218644652-2243660e-7c1d-4cac-a97d-687d37bf21f1.png)
+
+![image](https://user-images.githubusercontent.com/70988272/218644686-af473bc6-e671-4139-9848-43361d6b3367.png)
+
+![image](https://user-images.githubusercontent.com/70988272/218644724-de67eae8-1313-4bac-8dbd-04c19f23db58.png)
+
+![image](https://user-images.githubusercontent.com/70988272/218644757-5ec757fc-c2a9-4984-a6d6-5292311ef057.png)
+
+![image](https://user-images.githubusercontent.com/70988272/218644780-33c0d5b0-5a4d-4af9-8700-407635b0f045.png)
