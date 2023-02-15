@@ -120,3 +120,24 @@ int main(void)
     pop(&s);
     print_node(&s);
 }
+
+/*
+Print start! 
+[BACK] 11<-9<-3<-1<-5 [front]
+Print Finished
+Print start! 
+[BACK] 9<-3<-1<-5 [front]
+Print Finished
+Print start! 
+[BACK] 3<-1<-5 [front]
+Print Finished
+Print start! 
+[BACK] 1<-5 [front]
+Print Finished
+Print start! 
+[BACK] 5 [front]
+Print Finished
+CAN'T PRINT : Null Stack!
+Can't POP : This Stack is Empty!
+CAN'T PRINT : Null Stack!
+*/
