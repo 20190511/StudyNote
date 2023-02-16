@@ -1,4 +1,4 @@
-#include "heap_data.h"
+#include "Heap(free data).c"
 #include <stdio.h>
 #include <stdlib.h>
 #define GRAPH_SIZE  5
