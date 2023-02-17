@@ -56,6 +56,7 @@ void push_data (Hash *hash, int key, char* name)
     else
     {
         hash->hashtable_back[index]->next = newNode;
+        hash->hashtable_back[index] = newNode;        
         hash->count_table[index]++;
     }
 }
@@ -78,7 +79,7 @@ void print_hash(Hash *hash)
         printf("----   ----------------------   ---- \n");
     for (int i = 0 ; i < HASH_INDEX ; i++)
     {
-        printf("|---    hash table index [%d]   ----| \n", i);
+        printf("|---    hash table index [%d]   ----| \n", i+1);
         for (int j = 0 ; j < hash->count_table[i] ; j++)
         {
             printf("| %15s 's key is %6d |\n", hash->hashtable_front[i]->name, hash->hashtable_front[i]->key);
@@ -86,7 +87,7 @@ void print_hash(Hash *hash)
         }
         printf("|----------------------------------|\n");
     }
-        printf("----   ----------------------   ---- \n");
+        printf("----   ----------------------   ---- \n\n\n");
     for (int i = 0 ; i < HASH_INDEX ;i++)
         hash->hashtable_front[i] = originals[i];
 
@@ -96,6 +97,7 @@ int main(void)
     Hash h;
     initHash(&h);
     push_data(&h, 432, "junhyeong");
+    push_data(&h, 432, "koi");
     push_data(&h, 532, "Doris");
 
     push_data(&h, 555, "soso");
@@ -103,21 +105,3 @@ int main(void)
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
-
-/**
-----   ----------------------   ---- 
-|---    hash table index [0]   ----| 
-|            soso 's key is    555 |
-|----------------------------------|
-|---    hash table index [1]   ----| 
-|----------------------------------|
-|---    hash table index [2]   ----| 
-|       junhyeong 's key is    432 |
-|           Doris 's key is    532 |
-|----------------------------------|
-|---    hash table index [3]   ----| 
-|----------------------------------|
-|---    hash table index [4]   ----| 
-|----------------------------------|
-----   ----------------------   ---- 
-**/
