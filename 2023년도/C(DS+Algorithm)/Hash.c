@@ -19,7 +19,7 @@ DataSet* initData (int key, char* name)
     strcpy(newData->name, name);
     newData->key = key;
     for (int i = 0 ; i < DATA_COUNT ; i++)
-        newData->data[i] = '\0';
+        newData->data[i] = NULL;
     newData->data_count = 0;
     newData->next = NULL; /*다음꺼는 마지막에 체이닝으로 달리는 형식*/
     return newData;
@@ -76,18 +76,25 @@ void print_hash(Hash *hash)
     for (int i = 0 ; i < HASH_INDEX ;i++)
         originals[i] = hash->hashtable_front[i];
 
-        printf("----   ----------------------   ---- \n");
+        printf("----   ------------------------   ---- \n");
     for (int i = 0 ; i < HASH_INDEX ; i++)
     {
-        printf("|---    hash table index [%d]   ----| \n", i+1);
+        printf("|----    hash table index [%d]   -----| \n", i+1);
         for (int j = 0 ; j < hash->count_table[i] ; j++)
         {
-            printf("| %15s 's key is %6d |\n", hash->hashtable_front[i]->name, hash->hashtable_front[i]->key);
+            printf("| [%-15s] 's key is %6d |\n", hash->hashtable_front[i]->name, hash->hashtable_front[i]->key);
+            if (hash->hashtable_front[i]->data_count > 0)
+            {
+                for (int k = 0 ; k < hash->hashtable_front[i]->data_count; k++)
+                {
+                    printf("|        data[%-2d] is %-16s|\n",k+1, hash->hashtable_front[i]->data[k]);
+                }
+            }
             hash->hashtable_front[i] = hash->hashtable_front[i]->next;
         }
-        printf("|----------------------------------|\n");
+        printf("|------------------------------------|\n");
     }
-        printf("----   ----------------------   ---- \n\n\n");
+        printf("----   ------------------------   ---- \n\n\n");
     for (int i = 0 ; i < HASH_INDEX ;i++)
         hash->hashtable_front[i] = originals[i];
 }
@@ -153,7 +160,11 @@ void Data_push (Hash *hash, int key, char *name, char* data)
             {
                 printf("Datapush : %s in index %d\n", data, hash->hashtable_front[index]->data_count);
                 /*char* data[index] 에 char* data 타입을 넣는 경우, 포인터를 사용해서 변경하기 때문에 포인터를 바로넣어주면된다.*/
-                hash->hashtable_front[index]->data[hash->hashtable_front[index]->data_count++] = data;
+                //hash->hashtable_front[index]->data[0] = data;
+                int data_index = hash->hashtable_front[index]->data_count;
+                //strcpy(hash->hashtable_front[index]->data[data_index], data); //<- 오류 발생
+                hash->hashtable_front[index]->data[data_index] = data;
+                hash->hashtable_front[index]->data_count++;
                 hash->hashtable_front[index] = original;
                 return;
             }
@@ -179,47 +190,68 @@ int main(void)
     delete(&h, 532, "Doris");
     print_hash(&h);
     Data_push(&h, 432, "junhyeong", "Pohang");
+    Data_push(&h, 432, "junhyeong", "Suwon");
+    Data_push(&h, 432, "junhyeong", "Seoul");
+    print_hash(&h);
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
-
-/*
-
-----   ----------------------   ---- 
-|---    hash table index [1]   ----| 
-|            soso 's key is    555 |
-|----------------------------------|
-|---    hash table index [2]   ----| 
-|----------------------------------|
-|---    hash table index [3]   ----| 
-|       junhyeong 's key is    432 |
-|             koi 's key is   4432 |
-|           Doris 's key is    532 |
-|----------------------------------|
-|---    hash table index [4]   ----| 
-|----------------------------------|
-|---    hash table index [5]   ----| 
-|----------------------------------|
-----   ----------------------   ---- 
+/**
+----   ------------------------   ---- 
+|----    hash table index [1]   -----| 
+| [soso           ] 's key is    555 |
+|------------------------------------|
+|----    hash table index [2]   -----| 
+|------------------------------------|
+|----    hash table index [3]   -----| 
+| [junhyeong      ] 's key is    432 |
+| [koi            ] 's key is   4432 |
+| [Doris          ] 's key is    532 |
+|------------------------------------|
+|----    hash table index [4]   -----| 
+|------------------------------------|
+|----    hash table index [5]   -----| 
+|------------------------------------|
+----   ------------------------   ---- 
 
 
 Doris' key(532) will be deleted!
-----   ----------------------   ---- 
-|---    hash table index [1]   ----| 
-|            soso 's key is    555 |
-|----------------------------------|
-|---    hash table index [2]   ----| 
-|----------------------------------|
-|---    hash table index [3]   ----| 
-|       junhyeong 's key is    432 |
-|             koi 's key is   4432 |
-|----------------------------------|
-|---    hash table index [4]   ----| 
-|----------------------------------|
-|---    hash table index [5]   ----| 
-|----------------------------------|
-----   ----------------------   ---- 
+----   ------------------------   ---- 
+|----    hash table index [1]   -----| 
+| [soso           ] 's key is    555 |
+|------------------------------------|
+|----    hash table index [2]   -----| 
+|------------------------------------|
+|----    hash table index [3]   -----| 
+| [junhyeong      ] 's key is    432 |
+| [koi            ] 's key is   4432 |
+|------------------------------------|
+|----    hash table index [4]   -----| 
+|------------------------------------|
+|----    hash table index [5]   -----| 
+|------------------------------------|
+----   ------------------------   ---- 
 
 
 Datapush : Pohang in index 0
-*/
+Datapush : Suwon in index 1
+Datapush : Seoul in index 2
+----   ------------------------   ---- 
+|----    hash table index [1]   -----| 
+| [soso           ] 's key is    555 |
+|------------------------------------|
+|----    hash table index [2]   -----| 
+|------------------------------------|
+|----    hash table index [3]   -----| 
+| [junhyeong      ] 's key is    432 |
+|        data[1 ] is Pohang          |
+|        data[2 ] is Suwon           |
+|        data[3 ] is Seoul           |
+| [koi            ] 's key is   4432 |
+|------------------------------------|
+|----    hash table index [4]   -----| 
+|------------------------------------|
+|----    hash table index [5]   -----| 
+|------------------------------------|
+----   ------------------------   ---- 
+**/
