@@ -26,8 +26,8 @@ DataSet* initData (int key, char* name)
 }
 
 typedef struct Hash {
-    DataSet *hashtable[HASH_INDEX]; /*해시테이블에 역을 예정.*/
-    DataSet *headers [HASH_INDEX];
+    DataSet *hashtable_front [HASH_INDEX]; /*해시테이블에 역을 예정.*/
+    DataSet *hashtable_back [HASH_INDEX];
     int count_table[HASH_INDEX];
 }Hash;
 
@@ -36,19 +36,27 @@ void initHash(Hash *hash)
 {
     for (int i = 0 ;i < HASH_INDEX ; i++)
     {
-        hash->hashtable[i] = NULL;
+        hash->hashtable_front[i] = NULL;
+        hash->hashtable_back[i] = NULL;
         hash->count_table[i] = 0;
     }
 }
 
+/*삽입시간 O(1)*/
 void push_data (Hash *hash, int key, char* name)
 {
-    DataSet *news = initData(key, name);
-    int index = news->key % 5; /*아주 간결한 해시알고리즘*/
+    DataSet *newNode = initData(key, name);
+    int index = newNode->key % 5; /*아주 간결한 해시알고리즘*/
     
     if (hash->count_table[index] == 0) /*Hash table이 비어있으면 삽입*/
     {
-        
+        hash->hashtable_back[index] = hash->hashtable_back[index] = newNode;
+        hash->count_table[index]++;
+    }
+    else
+    {
+        hash->hashtable_back[index]->next = newNode;
+        hash->count_table[index]++;
     }
 }
 
