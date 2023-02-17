@@ -24,7 +24,7 @@ DataSet* initData (int key, char* name)
     newData->next = NULL; /*다음꺼는 마지막에 체이닝으로 달리는 형식*/
     return newData;
 }
-
+ 
 typedef struct Hash {
     DataSet *hashtable_front [HASH_INDEX]; /*해시테이블에 역을 예정.*/
     DataSet *hashtable_back [HASH_INDEX];
