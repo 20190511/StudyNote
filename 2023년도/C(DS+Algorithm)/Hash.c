@@ -90,36 +90,63 @@ void print_hash(Hash *hash)
         printf("----   ----------------------   ---- \n\n\n");
     for (int i = 0 ; i < HASH_INDEX ;i++)
         hash->hashtable_front[i] = originals[i];
-
 }
+
+void delete (Hash* hash, int key, char* name)
+{
+    int index = key%5 ; /*해시 알고리즘*/
+    DataSet* delete_node;
+
+    if (hash->count_table[index] == 0)
+    {
+        printf("This key is Wront!\n");
+        return;
+    }
+    else if (strcmp(hash->hashtable_front[index]->name, name) == 0) /*strcmp는 같으면 0이다!*/
+    {
+        delete_node = hash->hashtable_front[index];
+        printf("(f)%s' key(%d) will be deleted!\n",hash->hashtable_front[index]->name,hash->hashtable_front[index]->key);
+        hash->hashtable_front[index] = hash->hashtable_front[index]->next;
+        hash->count_table[index]--;
+        free(delete_node);
+        return;
+    }
+    else
+    {
+        DataSet *original = hash->hashtable_front[index];
+        DataSet *parent = hash->hashtable_front[index];
+        for (int i = 0 ; i < hash->count_table[index] ; i++)
+        {
+            if (strcmp(hash->hashtable_front[index]->name, name) == 0) /*strcmp는 같으면 0이다!*/
+            {
+                printf("%s' key(%d) will be deleted!\n",hash->hashtable_front[index]->name,hash->hashtable_front[index]->key);
+                delete_node = hash->hashtable_front[index];
+                parent->next = parent->next->next;
+                hash->count_table[index]--;
+                free(delete_node);
+                hash->hashtable_front[index] = original;
+                return;
+            }
+            parent = hash->hashtable_front[index];
+            hash->hashtable_front[index] = hash->hashtable_front[index]->next;
+        }
+        hash->hashtable_front[index] = original;
+    }
+    printf("Your node %s and key(%d) is not listed in this hash\n", name, key);
+}
+
 int main(void)
 {
     Hash h;
     initHash(&h);
     push_data(&h, 432, "junhyeong");
-    push_data(&h, 432, "koi");
+    push_data(&h, 4432, "koi");
     push_data(&h, 532, "Doris");
 
     push_data(&h, 555, "soso");
     print_hash(&h);
+    delete(&h, 532, "Doris");
+    print_hash(&h);
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
-/*
-----   ----------------------   ---- 
-|---    hash table index [1]   ----| 
-|            soso 's key is    555 |
-|----------------------------------|
-|---    hash table index [2]   ----| 
-|----------------------------------|
-|---    hash table index [3]   ----| 
-|       junhyeong 's key is    432 |
-|             koi 's key is    432 |
-|           Doris 's key is    532 |
-|----------------------------------|
-|---    hash table index [4]   ----| 
-|----------------------------------|
-|---    hash table index [5]   ----| 
-|----------------------------------|
-----   ----------------------   ---- 
-*/
