@@ -9,7 +9,7 @@ typedef struct DataSet {
     char name[NAME_SIZE];
     char *data[DATA_COUNT];
     int data_count;
-    DataSet *next; /*chaining 연결*/
+    struct DataSet *next; /*chaining 연결*/
 }DataSet;
 
 DataSet* initData (int key, char* name)
@@ -50,7 +50,7 @@ void push_data (Hash *hash, int key, char* name)
     
     if (hash->count_table[index] == 0) /*Hash table이 비어있으면 삽입*/
     {
-        hash->hashtable_back[index] = hash->hashtable_back[index] = newNode;
+        hash->hashtable_back[index] = hash->hashtable_front[index] = newNode;
         hash->count_table[index]++;
     }
     else
@@ -68,10 +68,56 @@ void print_DataSet(DataSet* data)
         printf("---> the data[%d] is %-15s\n", i, data->data[i]);
     }
 }
+
+void print_hash(Hash *hash)
+{
+    DataSet* originals[HASH_INDEX]; /*header기억*/
+    for (int i = 0 ; i < HASH_INDEX ;i++)
+        originals[i] = hash->hashtable_front[i];
+
+        printf("----   ----------------------   ---- \n");
+    for (int i = 0 ; i < HASH_INDEX ; i++)
+    {
+        printf("|---    hash table index [%d]   ----| \n", i);
+        for (int j = 0 ; j < hash->count_table[i] ; j++)
+        {
+            printf("| %15s 's key is %6d |\n", hash->hashtable_front[i]->name, hash->hashtable_front[i]->key);
+            hash->hashtable_front[i] = hash->hashtable_front[i]->next;
+        }
+        printf("|----------------------------------|\n");
+    }
+        printf("----   ----------------------   ---- \n");
+    for (int i = 0 ; i < HASH_INDEX ;i++)
+        hash->hashtable_front[i] = originals[i];
+
+}
 int main(void)
 {
     Hash h;
     initHash(&h);
+    push_data(&h, 432, "junhyeong");
+    push_data(&h, 532, "Doris");
+
+    push_data(&h, 555, "soso");
+    print_hash(&h);
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
+
+/**
+----   ----------------------   ---- 
+|---    hash table index [0]   ----| 
+|            soso 's key is    555 |
+|----------------------------------|
+|---    hash table index [1]   ----| 
+|----------------------------------|
+|---    hash table index [2]   ----| 
+|       junhyeong 's key is    432 |
+|           Doris 's key is    532 |
+|----------------------------------|
+|---    hash table index [3]   ----| 
+|----------------------------------|
+|---    hash table index [4]   ----| 
+|----------------------------------|
+----   ----------------------   ---- 
+**/
