@@ -162,8 +162,10 @@ void Data_push (Hash *hash, int key, char *name, char* data)
                 /*char* data[index] 에 char* data 타입을 넣는 경우, 포인터를 사용해서 변경하기 때문에 포인터를 바로넣어주면된다.*/
                 //hash->hashtable_front[index]->data[0] = data;
                 int data_index = hash->hashtable_front[index]->data_count;
-                //strcpy(hash->hashtable_front[index]->data[data_index], data); //<- 오류 발생
-                hash->hashtable_front[index]->data[data_index] = data;
+                /* 실험 해본 결과 : strcpy를 쓰려면 먼저 char* 값을 malloc으로 할당을 해주고 사용해야함*/
+                hash->hashtable_front[index]->data[data_index] = (char*)malloc(sizeof(char) * strlen(data));
+                strcpy(hash->hashtable_front[index]->data[data_index], data); 
+                //hash->hashtable_front[index]->data[data_index] = data;
                 hash->hashtable_front[index]->data_count++;
                 hash->hashtable_front[index] = original;
                 return;
@@ -192,66 +194,9 @@ int main(void)
     Data_push(&h, 432, "junhyeong", "Pohang");
     Data_push(&h, 432, "junhyeong", "Suwon");
     Data_push(&h, 432, "junhyeong", "Seoul");
+    Data_push(&h, 432, "junhyeong", "오늘 수원도착");
+    //delete(&h, 432,"junhyeong");
     print_hash(&h);
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
-/**
-----   ------------------------   ---- 
-|----    hash table index [1]   -----| 
-| [soso           ] 's key is    555 |
-|------------------------------------|
-|----    hash table index [2]   -----| 
-|------------------------------------|
-|----    hash table index [3]   -----| 
-| [junhyeong      ] 's key is    432 |
-| [koi            ] 's key is   4432 |
-| [Doris          ] 's key is    532 |
-|------------------------------------|
-|----    hash table index [4]   -----| 
-|------------------------------------|
-|----    hash table index [5]   -----| 
-|------------------------------------|
-----   ------------------------   ---- 
-
-
-Doris' key(532) will be deleted!
-----   ------------------------   ---- 
-|----    hash table index [1]   -----| 
-| [soso           ] 's key is    555 |
-|------------------------------------|
-|----    hash table index [2]   -----| 
-|------------------------------------|
-|----    hash table index [3]   -----| 
-| [junhyeong      ] 's key is    432 |
-| [koi            ] 's key is   4432 |
-|------------------------------------|
-|----    hash table index [4]   -----| 
-|------------------------------------|
-|----    hash table index [5]   -----| 
-|------------------------------------|
-----   ------------------------   ---- 
-
-
-Datapush : Pohang in index 0
-Datapush : Suwon in index 1
-Datapush : Seoul in index 2
-----   ------------------------   ---- 
-|----    hash table index [1]   -----| 
-| [soso           ] 's key is    555 |
-|------------------------------------|
-|----    hash table index [2]   -----| 
-|------------------------------------|
-|----    hash table index [3]   -----| 
-| [junhyeong      ] 's key is    432 |
-|        data[1 ] is Pohang          |
-|        data[2 ] is Suwon           |
-|        data[3 ] is Seoul           |
-| [koi            ] 's key is   4432 |
-|------------------------------------|
-|----    hash table index [4]   -----| 
-|------------------------------------|
-|----    hash table index [5]   -----| 
-|------------------------------------|
-----   ------------------------   ---- 
-**/
