@@ -135,6 +135,37 @@ void delete (Hash* hash, int key, char* name)
     printf("Your node %s and key(%d) is not listed in this hash\n", name, key);
 }
 
+void Data_push (Hash *hash, int key, char *name, char* data)
+{
+    int index = key%5;
+    DataSet *original = hash->hashtable_front[index];
+    for (int i = 0 ; i < hash->count_table[i] ; i++)
+    {
+        if (strcmp(hash->hashtable_front[index]->name, name) == 0)
+        {
+            if (hash->hashtable_front[index]->data_count == DATA_COUNT)
+            {
+                printf("Data POOL is FULL, Can't push this data %s\n", data);
+                hash->hashtable_front[index] = original;
+                return;
+            }
+            else
+            {
+                printf("Datapush : %s in index %d\n", data, hash->hashtable_front[index]->data_count);
+                /*char* data[index] 에 char* data 타입을 넣는 경우, 포인터를 사용해서 변경하기 때문에 포인터를 바로넣어주면된다.*/
+                hash->hashtable_front[index]->data[hash->hashtable_front[index]->data_count++] = data;
+                hash->hashtable_front[index] = original;
+                return;
+            }
+        }
+        hash->hashtable_front[index] = hash->hashtable_front[index]->next;
+    }
+    hash->hashtable_front[index] = original;
+    printf("%s key(%d) is not listed in these hash\n", name, key);
+    return;
+}
+
+
 int main(void)
 {
     Hash h;
@@ -147,11 +178,12 @@ int main(void)
     print_hash(&h);
     delete(&h, 532, "Doris");
     print_hash(&h);
+    Data_push(&h, 432, "junhyeong", "Pohang");
     //print_DataSet(initData(256, "Junhyeong"));
     return 0;
 }
 
-/**
+/*
 
 ----   ----------------------   ---- 
 |---    hash table index [1]   ----| 
@@ -187,4 +219,7 @@ Doris' key(532) will be deleted!
 |---    hash table index [5]   ----| 
 |----------------------------------|
 ----   ----------------------   ---- 
-**/
+
+
+Datapush : Pohang in index 0
+*/
