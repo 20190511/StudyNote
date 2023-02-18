@@ -23,8 +23,11 @@ int hashing (char *str, int size)
 */
 void reallocs (int** result, int* size)
 {
+    int original = *size;
     *size *= 2;
     *result = (int*)realloc(*result, sizeof(int)*(*size));
+    for (int i = original ; i < *size ; i++ )
+        (*result)[i] = -1;
 
 }
 
@@ -76,8 +79,8 @@ int* RabinKarp (char str[], char pat[])
 
 int main(void)
 {
-    char str1[] = "AABDDCDABD";
-    char str2[] = "ABD";
+    char str1[] = "AABDDCDAASDAAASDASFAAASDABD";
+    char str2[] = "AA";
     hashing(str2, 3);
     int* idx = RabinKarp(str1, str2);
     for (int i = 0 ; i < 1000000; i++)
@@ -92,3 +95,8 @@ int main(void)
     printf("\n");
     return 0;
 }
+/*
+
+0 7 11 12 19 20
+
+*/
