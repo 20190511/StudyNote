@@ -69,7 +69,7 @@ int getchar(void);               // stdin으로부터 한 글자를 입려받는
 int ferror (FILE *fp);           // EOF 가 입출력 에러면 0, 아니면 0이 아닌값
   return EOF 가 입출력 에러면 0, 아니면 0이 아닌값;
 int feof (FILE *fp);             // EOF 가 파일의 fp._flag가 EOF 플래그가 설정되어 있으면 0, 아니면 0이 아닌수
-  return  EOF 가 파일의 fp._flag가 EOF 플래그가 설정되어 있으면 0, 아니면 0;
+  return  EOF 가 파일의 fp._flag가 EOF 플래그가 설정되어 있으면 1(true), 아니면 0(False); // 파일의 끝이면 참 아니면 거짓.
 void clearerr (FILE *fp);        // 에러 플래그들을 모두 초기화시켜줌 <- 에러 뜨고 clearerr 안해주면 에러값들이 초기화되지 않아 계속 남아있음
 
 /* 7. ungetc(char x,fp) : 해당 fp stream 에다가 'x'를 하나 넣어주는 함수 
@@ -82,9 +82,9 @@ int ungetc(int c, FILE *fp);
 
 /*8. putc, fputc, putchar(void) : 한 번에 하나의 문자를 출력하는 함수 */
 #include <stdio.h>
-int getc (int c, FILE *fp);             // fp에 c를 출력하는 함수 (함수)
-int fgetc(int c, FILE *fp);             // fp에 c를 출력하는 함수 (매크로)
-int getchar(int c);                     // c를 모니터에 출력해줌
+int putc (int c, FILE *fp);             // fp에 c를 출력하는 함수 (함수)
+int fputc(int c, FILE *fp);             // fp에 c를 출력하는 함수 (매크로)
+int putchar(int c);                     // c를 모니터에 출력해줌
   return 성공시 0, 실패 or 파일의 끝일때 EOF(-1);
 
 /* 9. fgets, gets : 문자열을 입력받는 함수
