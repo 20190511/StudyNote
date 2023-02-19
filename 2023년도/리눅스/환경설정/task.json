@@ -1,0 +1,128 @@
+{
+    "version": "2.0.0",
+    "runner": "terminal",
+    "type": "shell",
+    "echoCommand": true,
+    "presentation" : { "reveal": "always" },
+    "tasks": [
+      {
+         "label": "save and compile for C++",
+         "command": "g++",
+         "args": [
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}"
+         ],
+         "group": "build",
+         "problemMatcher": {
+            "fileLocation": [
+               "relative",
+               "${workspaceRoot}"
+            ],
+            "pattern": {
+               "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning error):\\s+(.*)$",
+               "file": 1,
+               "line": 2,
+               "column": 3,
+               "severity": 4,
+               "message": 5
+            }
+         }
+      },
+      {
+         "label": "save and compile for C",
+         "command": "gcc",
+         "args": [
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}"
+         ],
+         "group": "build",
+         "problemMatcher": {
+            "fileLocation": [
+               "relative",
+               "${workspaceRoot}"
+            ],
+            "pattern": {
+               "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning error):\\s+(.*)$",
+               "file": 1,
+               "line": 2,
+               "column": 3,
+               "severity": 4,
+               "message": 5
+            }
+         }
+      },
+      {
+         "label": "execute",
+         "command": "${fileDirname}/${fileBasenameNoExtension}",
+         "group": "test"
+      },
+      {
+         "type": "cppbuild",
+         "label": "C/C++: gcc-11 활성 파일 빌드",
+         "command": "/usr/bin/gcc-11",
+         "args": [
+            "-fdiagnostics-color=always",
+            "-g",
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}"
+            //,"-lpthread"
+         ],
+         "options": {
+            "cwd": "${fileDirname}"
+         },
+         "problemMatcher": [
+            "$gcc"
+         ],
+         "group": "build",
+         "detail": "컴파일러: /usr/bin/gcc-11"
+      },
+      {
+         "type": "cppbuild",
+         "label": "C/C++: gcc 활성 파일 빌드",
+         "command": "/usr/bin/gcc",
+         "args": [
+            "-fdiagnostics-color=always",
+            "-g",
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}"
+            //,"-lpthread"
+         ],
+         "options": {
+            "cwd": "${fileDirname}"
+         },
+         "problemMatcher": [
+            "$gcc"
+         ],
+         "group": "build",
+         "detail": "컴파일러: /usr/bin/gcc"
+      },
+      {
+         "type": "cppbuild",
+         "label": "C/C++: gcc 활성 파일 빌드",
+         "command": "/usr/bin/gcc",
+         "args": [
+            "-fdiagnostics-color=always",
+            "-g",
+            "${file}",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}"
+            //,"-lpthread"
+         ],
+         "options": {
+            "cwd": "${fileDirname}"
+         },
+         "problemMatcher": [
+            "$gcc"
+         ],
+         "group": {
+            "kind": "build",
+            "isDefault": true
+         },
+         "detail": "컴파일러: /usr/bin/gcc"
+      }
+   ]
+}
