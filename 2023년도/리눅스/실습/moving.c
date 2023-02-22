@@ -15,6 +15,7 @@
  * ./moving                         -> temp name 폴더를 생성해서 모든 파일 이동 (.vscode, moving 제외)
  * ./moving <folder_name>           -> 현재 폴더에 folder_name 생성하고 모든 파일 이동 (.vscode, moving 제외)
  * ./moving <path> <folder_name>    -> 해당 path에 folder_name 생성하고 모든 파일 이동 (.vscode, moving 제외)
+ * 환경변수화 + CTRL+C 눌렀을 때 
 */
 void moving (char cur_path[], char folder_name[])
 {
