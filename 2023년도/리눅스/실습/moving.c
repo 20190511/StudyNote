@@ -25,7 +25,7 @@ void moving (char cur_path[], char folder_name[])
     struct stat file_stat;
     
     dp_prev = opendir(cur_path);
-    char new_path [MAX_NAME] = {"\0",};
+    char new_path [MAX_NAME] = {'\0',};
     strcpy(new_path, cur_path);
     strcat(new_path, "/");
     strcat(new_path, folder_name);
@@ -34,7 +34,7 @@ void moving (char cur_path[], char folder_name[])
         ERROR_PRINT("Fopen");
     
     dir = readdir(dp_prev);
-    char file_name [MAX_NAME+1] = {"\0",};
+    char file_name [MAX_NAME+1] = {'\0',};
     int is_existed_folder = 0; /* 폴더 명 없으면 폴더제작*/
 
     char original_path[MAX_NAME*2] = {'\0',};
