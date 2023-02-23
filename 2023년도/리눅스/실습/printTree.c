@@ -101,7 +101,7 @@ void root_exploror(Node *node)
         {
             if (node->max_count[0] == node->dir_count+1)
                 expand_dir_next(node);
-            printf("%s is directory\n",path_cat);
+            //printf("%s is directory\n",path_cat);
             node->dir_next[node->dir_count] = newNode;
             node->dir_count++;
         }
@@ -109,7 +109,7 @@ void root_exploror(Node *node)
         {
             if (node->max_count[1] == node->other_count+1)
                 expand_other_next(node);
-            printf("%s is other file\n",path_cat);
+            //printf("%s is other file\n",path_cat);
             node->other_next[node->other_count] = newNode;
             node->other_count++;
         }
@@ -122,18 +122,12 @@ void root_exploror(Node *node)
     closedir(dp_root);
 }
 
-void dp_call(int depth)
-{
-    Folder *folder = init_folder("/");
-    root_exploror(folder->root);
 
-    Node *orignal_root = folder->root;
-    for (int i = 1 ; i < depth ; i++)
-    {
-        printf("root dir_count = %d\n", folder->root->dir_count);
-        for (int k = 0 ; k < folder->root->dir_count ; k++)
+void exploror (Node* node)
+{
+    for (int k = 0 ; k < node->dir_count ; k++)
         {
-            Node* cur = folder->root->dir_next[k];
+            Node* cur = node->dir_next[k];
             if (access(cur->name, R_OK) != 0) /* 접근 권한 확인*/
             {
                 printf("%s can't exploror\n", cur->name);
@@ -142,11 +136,127 @@ void dp_call(int depth)
             root_exploror(cur);
             printf("%s 's unit count is %d + %d = %d\n",cur->name, cur->dir_count, cur->other_count, cur->dir_count+cur->other_count);
         }  
-    }
 }
+
+
+void rceulsive_exploror (Node *node, int depth, int cur_depth)
+{
+    if (depth == cur_depth+1)
+    {
+        int node_dir_cnt = node->dir_count;
+        //printf("%s dir_count = %d\n",node->name, node_dir_cnt);
+        for (int i = 0 ; i < node_dir_cnt; i++)
+        {
+            Node *cur_node = node->dir_next[i];
+            if (access(cur_node->name, R_OK) != 0) // 접근 권한 확인
+            {
+                printf("%s can't exploror\n", cur_node->name);
+                continue;
+            }
+            root_exploror(cur_node);
+            int total_unit_size = cur_node->dir_count+cur_node->other_count;
+            /*
+            printf("%s 's unit count is %d + %d = %d\n",
+            cur_node->name, cur_node->dir_count, cur_node->other_count, total_unit_size);
+            */
+        }
+    }
+    else
+    {
+        for (int i = 0 ; i < node->dir_count ; i++)
+        {
+            Node *process = node->dir_next[i];
+            if (access(process->name, R_OK) != 0) // 접근 권한 확인
+            {
+                //printf("%s can't exploror\n", process->name);
+                continue;
+            }
+            root_exploror(process);
+            rceulsive_exploror(process, depth, cur_depth+1);
+        }
+    }
+
+}
+
+char *replaceAll(char *s, const char *olds, const char *news) {
+  char *result, *sr;
+  size_t i, count = 0;
+  size_t oldlen = strlen(olds); if (oldlen < 1) return s;
+  size_t newlen = strlen(news);
+
+
+  if (newlen != oldlen) {
+    for (i = 0; s[i] != '\0';) {
+      if (memcmp(&s[i], olds, oldlen) == 0) count++, i += oldlen;
+      else i++;
+    }
+  } else i = strlen(s);
+
+
+  result = (char *) malloc(i + 1 + count * (newlen - oldlen));
+  if (result == NULL) return NULL;
+
+
+  sr = result;
+  while (*s) {
+    if (memcmp(s, olds, oldlen) == 0) {
+      memcpy(sr, news, newlen);
+      sr += newlen;
+      s  += oldlen;
+    } else *sr++ = *s++;
+  }
+  *sr = '\0';
+
+  return result;
+}
+
+void print_rceulsive_exploror (Node *node, int depth, int cur_depth)
+{
+    if (depth == cur_depth)
+    {
+        int node_dir_cnt = node->dir_count;
+        char print_unit[MAX_NAME] = {'\0',};
+        strcpy(print_unit,replaceAll(node->name, "/", "|─────"));
+        printf("%s\n", print_unit);
+        
+    }
+    else
+    {
+        for (int i = 0 ; i < node->dir_count ; i++)
+        {
+            Node *process = node->dir_next[i];
+            print_rceulsive_exploror(process, depth, cur_depth+1);
+        }
+    }
+
+}
+
+
+
+void print_tree(Folder *folder, int depth)
+{
+    Node *root = folder->root;
+    print_rceulsive_exploror(root, depth, 0);
+}
+
+/** 해당 root_path 경로를 depth 깊이만큼 탐색하는 함수
+ *  접근하지 못하는 경우에는 access(path, R_OK) 를 확인하여 걸러주면서 실행
+ */
+void dp_call(char root_path[], int depth)
+{
+    Folder *folder = init_folder(root_path);
+    root_exploror(folder->root);
+
+    Node *orignal_root = folder->root;
+    rceulsive_exploror(folder->root, depth, 0);
+
+    print_tree(folder, depth);
+}
+
+
 
 int main(void)
 {
-    dp_call(2);
+    dp_call("/",4);
     return 0;
 }
