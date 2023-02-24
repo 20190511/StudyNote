@@ -143,7 +143,9 @@ void exploror (Node* node)
 
 void rceulsive_exploror (Node *node, int depth, int cur_depth)
 {
-    static char* remember_past_path  [10][MAX_NAME];
+    static char remember_past_path  [10][MAX_NAME];
+    static FILE *fp;
+    fp = fopen("print_text.txt","w");
     if (depth == cur_depth+1)
     {
         int node_dir_cnt = node->dir_count;
@@ -168,32 +170,56 @@ void rceulsive_exploror (Node *node, int depth, int cur_depth)
             char token_val[10][MAX_NAME] = {'\0',};
             int cnt = 0;
             char* tmp_chars;
-            strcpy(tmp_chars, strtok(print_unit,"/"));
+            tmp_chars = strtok(print_unit,"/");
+            int root_change = 0;
             if (strcmp(remember_past_path[cnt], tmp_chars) == 0)
             {
+                printf("│     ");
+                fprintf(fp, "│     ");
                 strcpy(token_val[cnt++],"");
+                root_change += 1;
             }
             else
             {
-                printf("|─────");
+                printf("└─────");
+                fprintf(fp, "└─────");
+                strcpy(remember_past_path[cnt], tmp_chars);
                 strcpy(token_val[cnt++],tmp_chars);
             }
 
             while((tmp_chars = strtok(NULL,"/"))!= NULL)
             {
-                strcpy(token_val[cnt++], tmp_chars);
+                if (strcmp(remember_past_path[cnt], tmp_chars) == 0)
+                {
+                    strcpy(token_val[cnt++], "");
+                }
+                else
+                {
+                    strcpy(remember_past_path[cnt], tmp_chars);
+                    strcpy(token_val[cnt++], tmp_chars);
+                }
             }
-
             
             for (int idx = 0 ; idx < cnt ; idx++)
             {
-                printf("%-18s",token_val[idx]);
+                printf("%-20s",token_val[idx]);
+                fprintf(fp, "%-20s",token_val[idx]);
                 if(idx+1 < cnt)
-                    printf("|─────");
+                {
+                    if (strcmp(token_val[idx+1], "") == 0)
+                    {
+                        printf("│     ");
+                        fprintf(fp, "│     ");
+                    }
+                    else
+                    {
+                        printf("├─────");
+                        fprintf(fp, "├─────");
+                    }
+                }
             }
             printf("\n");
-
-            memcpy(remember_past_path, token_val, sizeof(char)*10*MAX_NAME);
+            fprintf(fp, "\n");
         }
     }
     else
@@ -279,8 +305,6 @@ void print_tree(Folder *folder, int depth)
  */
 void dp_call(char root_path[], int depth)
 {
-    printf("%s\n",root_path);
-    printf("|\n");
     Folder *folder = init_folder(root_path);
     root_exploror(folder->root);
 
@@ -290,7 +314,7 @@ void dp_call(char root_path[], int depth)
     //print_tree(folder, depth);
 }
 
-
+//#define DEBUG
 #ifdef DEBUG
 int main(void)
 {
