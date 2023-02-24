@@ -181,8 +181,8 @@ void rceulsive_exploror (Node *node, int depth, int cur_depth)
             }
             else
             {
-                printf("└─────");
-                fprintf(fp, "└─────");
+                printf("┌─────");
+                fprintf(fp, "┌─────");
                 strcpy(remember_past_path[cnt], tmp_chars);
                 strcpy(token_val[cnt++],tmp_chars);
             }
