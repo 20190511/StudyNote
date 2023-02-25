@@ -4,7 +4,8 @@
  <인자 설명>
   dirp
       - 파일 목록 또는 디렉토리 목록을 얻을 디렉토리에 대한 절대 path 또는 상대 path
-  namelist
+  
+  namelist : dirent 구조체 배열이 저장됨 (struct dirent **namelist = NULL 으로 초기화하고 사용할 것) -> dirent 포인터 배열 (**) + Call By Pointer (*)
       - namelist에 디렉토리에 있는 파일 및 디렉토리 목록이 저장됩니다.
       - 내부적으로 malloc(3) 또는 realloc(3)으로 할당되므로 사용후에는 반드시 free(3)를 해야합니다. 
       - 다중 pointer 변수를 선언해서 사용하므로 건별 free(3) 후 namelist 자체도 free(3)를 해야합니다. (예제 참조)
@@ -27,7 +28,8 @@
       ENOMEM : 메모리 부족으로 처리되지 않았습니다.
       ENOTDIR : dirp가 존재는 하나 directory가 아닙니다.
   0 이상
-      - 정상적으로 처리 되었으며, namelist에 저장된 struct dirent *의 갯수가 return됩니다.      
+      - 정상적으로 처리 되었으며, namelist에 저장된 struct dirent *의 갯수가 return됩니다.
+       즉 디렉토리 내부에 있는 파일/디렉토리 개수가 리턴
 */
 #include <dirent.h>
 int scandir(const char *dirp, struct dirent ***namelist,
