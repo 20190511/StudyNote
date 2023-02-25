@@ -1,4 +1,5 @@
 
+
 int kmp (char* origin, char* target)
 {   
     int tar_len = strlen(target);
@@ -70,9 +71,7 @@ char* replace (char* original, char* rep_before, char* rep_after, int cnt)
 {
     char* temp_char = (char*)malloc(strlen(original));
     strcpy(temp_char,original);
-    int rep_cnt = cnt;
-    if (rep_cnt == 0)
-        rep_cnt = strlen(original);
+    int rep_cnt = cnt == 0 ? strlen(original) : cnt; //삼항연산이용.
     for (int i = 0 ; i < rep_cnt ; i++)
     {
         char* ptr = temp_char;
