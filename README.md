@@ -16,8 +16,8 @@ H/W, S/W, Alogrithm 배운 내용 정리
 ### C             : [Practice Again](https://github.com/20190511/StudyNote/tree/main/2023%EB%85%84%EB%8F%84/C)
 ### LINUX(리눅스)  : [LINUX Study Preview](https://github.com/20190511/StudyNote/tree/main/2023%EB%85%84%EB%8F%84/%EB%A6%AC%EB%88%85%EC%8A%A4)
 ### C(DataStructure+Algorithm) : [구현연습](https://github.com/20190511/StudyNote/tree/main/2023%EB%85%84%EB%8F%84/C(DS%2BAlgorithm))
-![image](https://user-images.githubusercontent.com/70988272/221363939-c3ff85a1-fd25-4772-b4d9-a1ba067ef485.png)
+![image](https://user-images.githubusercontent.com/70988272/221364015-33726103-2c7b-45bb-90df-614b9af1a4de.png)
 ![image](https://user-images.githubusercontent.com/70988272/221363959-5cdcd878-9fc9-470b-b529-29b065a3d37a.png)
-![image](https://user-images.githubusercontent.com/70988272/221363978-f604e3f9-c53b-48ac-8784-ec2c24f3633d.png)
+![image](https://user-images.githubusercontent.com/70988272/221363978-f604e3f9-c53b-48ac-8784-ec2c24f3633d.png)  
 
 ---
