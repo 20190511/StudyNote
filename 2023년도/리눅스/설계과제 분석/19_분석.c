@@ -36,3 +36,46 @@ int scandir(const char *dirp, struct dirent ***namelist,
       int (*filter)(const struct dirent *),
       int (*compar)(const struct dirent **, const struct dirent **));
 
+
+
+
+
+
+
+/** 2. strrchr : 뒤에서부터 ch가 있는 위치를 알려주는 함수 
+                 문자열에 특정 문자가 있는 위치를 뒤에서부터 찾는 함수 (포인터)*/
+#include <string.h> 
+const char* strrchr(const char* str, int character);
+char* strrchr(char* str, int character);
+
+
+/** 이중 포인터 해제 **/
+struct dirent** nameliset;
+// ... ~~~동적할당~~~ ...
+for(i=0; i<count; i++){
+        free(namelist[i]);
+}                                                      
+free(namelist);  // 이중포인터 해제 시 각 포인터를 해제해준 다음 자기자신 해제!
+
+
+
+
+
+/** 3. 스레드 중간취소 및 킬 ***/
+static void killer(void *arg) {
+    
+    pthread_t *tids = (pthread_t*)arg;
+    //학생파일실행(t_function) 스레드에 최소 요청을 보냄
+    pthread_cancel(tids[0]);
+}
+
+// 재해석 요지 필요
+static void *control(void *arg) {
+    
+    pthread_cleanup_push(killer, arg);
+    do {
+        pthread_testcancel();
+    } while(1);
+    pthread_cleanup_pop(1);
+    return (void*)(NULL);
+}
