@@ -79,3 +79,27 @@ static void *control(void *arg) {
     pthread_cleanup_pop(1);
     return (void*)(NULL);
 }
+
+
+
+/** 4. char* ptr 과 sprintf의 활용 */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+int main(void)
+{
+    char name [1000];
+    
+    strcpy(name, "Hey good bye!");
+    
+    char *ptr = name + strlen(name)-3;
+    char *exam = " and my name is junhyeong";
+    sprintf(ptr, "dududududu, %s",ptr);
+    
+    printf("%s\n", name);
+    return 0;
+}
+// Hey good bdududududu, dududududu, 
+
