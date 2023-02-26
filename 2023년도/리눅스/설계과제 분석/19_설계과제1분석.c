@@ -556,7 +556,6 @@ void sort(int *list, int count) {
     }
 }
 
-/** 여기까지 해석함.*/
 void compare(char *STD, int std_num, int q_num) {
     
     int i,j, k;
@@ -774,7 +773,6 @@ void* t_function(void* multiple_arg) {
     
 }
 
-/*해석 해야함*/
 void creat_score_table(char *ANS,int q_num) {
     
     FILE *fp;
@@ -783,7 +781,7 @@ void creat_score_table(char *ANS,int q_num) {
     char tmp[30];
 
     strcpy(tmp, ANS);
-    strcat(tmp, "/score_table.csv");
+    strcat(tmp, "/score_table.csv"); //점수표 만들기.
 
     //score_table 생성
     printf("score_table.csv file doesn't exist in TREUDIR!\n"
@@ -802,13 +800,16 @@ void creat_score_table(char *ANS,int q_num) {
        //value 입력하기 
         switch(type) {
 
-            case 1 :
+            // 학생 점수 모두 출력.
+            case 1 : //문제번호의 점수설정
                 printf("Input value of blank question : ");
                 scanf("%f", &b_value);
                 printf("Input value of prograam question : ");
                 scanf("%f", &p_value);
                 
                 
+                //해당 문제의 점수를 설정하는 과정.
+                // csv 파일은 , 단위로 셀에 들어감.
                 for(i=3; i<q_num; i++) {
                     //빈칸문제
                     if(q[i].blank_q) {
@@ -858,26 +859,26 @@ void creat_score(char *ANS, int std_num, int q_num){
         exit(1);
     }
 
-    fprintf(fp, " ,");
+    fprintf(fp, " ,"); //★맨 위에 빈칸 하나 생성 : 명세 양식대로 만드는중
 
     for(i=QStart; i<q_num; i++) {
-        fprintf(fp, "%s,",q[i].name);
+        fprintf(fp, "%s,",q[i].name); //시험문제 csv로 구분
     }
-    fprintf(fp, "%s\n", "sum");
+    fprintf(fp, "%s\n", "sum"); //마지막 sum csv에 넣기.
 
     for(j=0; j<std_num; j++) {
         
         sum=0;
-        fprintf(fp, "%s,", std[j].id);
-        for(i=QStart; i<q_num; i++) {
-            if(std[j].card[i] == 1){
+        fprintf(fp, "%s,", std[j].id); //학번 넣기
+        for(i=QStart; i<q_num; i++) { //각 문제당 학생들의 성적기입.
+            if(std[j].card[i] == 1){  //학생이 맞추었으면 점수 주기.
                 sum += q[i].score;
                 fprintf(fp, "%.2f,", q[i].score);
             }
-            else
+            else // 학생이 빈칸으로 제출하였으면 0.00점 처리
                 fprintf(fp, "0.00,");
         }
-        fprintf(fp, "%.2f\n", sum);
+        fprintf(fp, "%.2f\n", sum); //학생으 마지막 총합 처리.
     }
     fclose(fp);
 }
@@ -894,6 +895,7 @@ int creat_std_table(char *STD, int q_num){
     char temp[30];
     char err[30];
 
+    // STD 파일의 모든 파일/디렉토리 탐색.
     if((count_s = scandir(STD, &stdlist, NULL, alphasort)) == -1){    
 	    fprintf(stderr, "%s directory scan Error\n", "./STD/");
 	    exit(1);
@@ -904,11 +906,21 @@ int creat_std_table(char *STD, int q_num){
 
         //printf("stdid : %s\n", std[s].id);
         for(j=QStart; j<q_num; j++) {
+                //sprintf(std[s].path, "%s/%s/", STD, sts[s].id) <- 대체 가능
+                //그리고 for 문 밖으로 빼야됨.
                 strcpy(std[s].path, STD);
                 strcat(std[s].path, "/");
                 strcat(std[s].path, std[s].id); //./STD/20162467
                 strcat(std[s].path, "/"); // ./STD/20162467/
 
+                /** 아래 코드 다음으로 확 줄이기 가능.  (sprintf 쓸 때는 꼭 \0, \n 붙일껏)
+                 * char *ptr = std[s].path + strlen(std[s].path);
+                 *  if (q[j].blank_q)
+                 * {
+                 *      sprintf(ptr, "%s.txt\0", q[j].name);
+                 *      .... 
+                 * }
+                */
                 if(q[j].blank_q == 1) {//빈칸문제일 경우
                     strcpy(temp, std[s].path);
                     strcat(temp, q[j].name); // ./STD/20162467/1-1
@@ -919,23 +931,32 @@ int creat_std_table(char *STD, int q_num){
                         exit(1);
                     }
 
-                    
-
-                    length = lseek(fd, 0, SEEK_END);
+                    // 빈칸문제의 학생 답안을 파일에서 긁어옴.
+                    length = lseek(fd, 0, SEEK_END); // 파일 전체 크기
                     lseek(fd, 0, SEEK_SET);
-		    read(fd, buf, length);
+	                read(fd, buf, length);
                     
-                    std[s].answer[j] = (char *)malloc(length+1);
+                    /** 
+                     *  answer 문자열 객체를 length만큼 할당해줌  
+                     * 로직이 꼬여있는것 같음
+                     *  ↓
+                     * int idx = trim(buf);
+                     * std[s].answer[j] = (char*)malloc(idx+1);
+                     * buf[idx] = '\0';
+                     * strcpy(std[s].anser[j], buf);
+                     * 
+                     */
+                    std[s].answer[j] = (char *)malloc(length+1); 
                     trim(buf);
-                    strcpy(std[s].answer[j],buf);
+                    strcpy(std[s].answer[j],buf); 
 
-		    for(k=0; k<BUFFER_SIZE; k++){
+		            for(k=0; k<BUFFER_SIZE; k++){
                         buf[k] = '\0';
                     }
 
                     close(fd);
                 }
-                else if(q[j].blank_q == 0){//프로그래밍 문제일 경우
+                else if(q[j].blank_q == 0){//프로그래밍 문제일 경우 -> 필요없으니 패스
 
 //                    execute_std(s,j);
                     continue;
@@ -952,7 +973,9 @@ int creat_std_table(char *STD, int q_num){
     return s;
 }
 
-/*공백제거*/
+/** 
+ *  위에서 사용하려면 함수를 void->int형으로 바꾸고 index를 return해주는것이 좋아보임.
+ * 문자열 끝 제거 -> strcpy(s,s+1) 을 해줌으로서 \t0, \n 을 없애버림.*/
 void trim(char* s) {
     char t[MAX_STR_LEN];
     char *end;
@@ -965,7 +988,7 @@ void trim(char* s) {
             s--;
         }
 	if(*s == '\0'){
-            strcpy(s, s+1);
+            strcpy(s, s+1); 
             s--;
         }
 	}
