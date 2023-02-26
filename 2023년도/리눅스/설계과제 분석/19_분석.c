@@ -82,7 +82,11 @@ static void *control(void *arg) {
 
 
 
-/** 4. char* ptr 과 sprintf의 활용 */
+/** 4. char* ptr 과 sprintf의 활용 
+ * sprintf(ptr, "형식문자%s" , ptr) 을 연속적으로 사용하면 ptr <-+ 형식문자 가 추가된 후 다시 추가되므로
+  "~~~형식문자형식문자" 와 같은 형태의 구조를 띄게되므로 조심하라
+  즉, 앞의 ptr+format 문자 -> %s 에 ptr 를 집어넣게 된다.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
