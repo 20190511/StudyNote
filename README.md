@@ -20,4 +20,5 @@ H/W, S/W, Alogrithm 배운 내용 정리
 ![image](https://user-images.githubusercontent.com/70988272/221363959-5cdcd878-9fc9-470b-b529-29b065a3d37a.png)
 ![image](https://user-images.githubusercontent.com/70988272/221363978-f604e3f9-c53b-48ac-8784-ec2c24f3633d.png)  
 
+### 2022 OS 예습
 ---
